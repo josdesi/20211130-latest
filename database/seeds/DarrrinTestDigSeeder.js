@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
 const Database = use('Database')
 const User = use('App/Models/User');
 const Industry = use('App/Models/Industry');
@@ -64,7 +63,7 @@ class DarrrinTestDigSeeder {
         };
       });
       const promises = digToAssign.map(dig => RecruiterHasIndustry.create(dig, transaction));
-      const result = await Promise.all(promises);
+      await Promise.all(promises);
       (!externalTransaction) && await transaction.commit();
     } catch(error) {
       (!externalTransaction) && (transaction) && await transaction.rollback();

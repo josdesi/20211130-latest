@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const Specialty = use('App/Models/Specialty');
 const Subspecialty = use('App/Models/Subspecialty');
 const Industry = use('App/Models/Industry');
@@ -26,7 +25,7 @@ class SubspecialtySeeder {
         .where({ title: specialty })
         .where({ industry_id: _industry.id })
         .first();
-      const subspecialty = await Subspecialty.findOrCreate({ title, specialty_id: _specialty.id });
+      await Subspecialty.findOrCreate({ title, specialty_id: _specialty.id });
     }
   }
 }
