@@ -30,7 +30,7 @@ class ConfigurationPermissionSeeder {
       ];
       await User.query().whereIn('email', emailOfUsersThatCanModifyPresetConfigs).fetch();
       const permissionsToAdd = users.rows.map(({id}) => {return {user_id: id, permission_id: 5}});
-      const result = await UserHasPermission.createMany(permissionsToAdd, transaction);
+      await UserHasPermission.createMany(permissionsToAdd, transaction);
       (!externalTransaction) && (await transaction.commit());
     } catch(error) {  
       (!externalTransaction) && (await transaction.rollback());

@@ -16,7 +16,7 @@ const { industries } = require('../data/IndustriesData');
 class IndustrySeeder {
   static async run() {
     for (const iterator in industries) {
-      const industry = await Industry.findOrCreate({ title: industries[iterator].title });
+      await Industry.findOrCreate({ title: industries[iterator].title });
     }
   }
 }

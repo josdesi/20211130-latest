@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const UnsubscribeReasonType = use('App/Models/UnsubscribeReasonType');
 const { UnsubscribeReasonTypes } = use('App/Helpers/Globals');
 
