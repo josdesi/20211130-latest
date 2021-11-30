@@ -402,7 +402,7 @@ test('Should return 200 when the suggestion endpoint is requested', async ({ cli
 
 after(async () => {
   if (name) {
-    name && (await CompanyHasNameEmployee.query().where('name_id', name.id).delete());
+    await CompanyHasNameEmployee.query().where('name_id', name.id).delete();
     await name.delete();
     await personalInformation.delete();
     await contact.delete();
