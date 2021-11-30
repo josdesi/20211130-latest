@@ -1,11 +1,8 @@
 'use strict';
 
 const HelloSign = use('Services/HelloSign');
-const Database = use('Database');
 const ModulePresetsConfigRepository = new (use('App/Helpers/ModulePresetsConfigRepository'))();
 const { FeeAgreementPaymentSchemes, FeeAgreementStatus } = use('App/Helpers/Globals');
-const HiringAuthority = use('App/Models/HiringAuthority');
-const User = use('App/Models/User');
 class HelloSignFeeAgreementContractManager {
   constructor(feaAgreementConfiguration) {
     this.feeAgreementConfiguration = feaAgreementConfiguration;

@@ -959,8 +959,8 @@ class FeeAgreementRepository {
         event_type_id: currentEventId,
       };
       if (fee_agreement_status_id === FeeAgreementStatus.PendingHiringAuthoritySignature) {
-        const company = await Company.find(feeAgreement.company_id);
-        const hiringAuthority = await HiringAuthority.find(feeAgreement.hiring_authority_id);
+        await Company.find(feeAgreement.company_id);
+        await HiringAuthority.find(feeAgreement.hiring_authority_id);
         const { contractSentDetails} = await this.sendToSign(feeAgreement, userId, transaction);
         eventData.event_details = {
           fee_agreement: this.unWrapValidableFields(feeAgreement),
@@ -1860,7 +1860,7 @@ class FeeAgreementRepository {
   async handleSignatureRequestEmailBounce(event, feeAgreement, externalTransaction)  {
     const transaction = externalTransaction ? externalTransaction : await Database.beginTransaction();
     try {
-      const registeredEvent = await this.genericHelloSignEventHandler(event, feeAgreement, transaction);
+      await this.genericHelloSignEventHandler(event, feeAgreement, transaction);
       (!externalTransaction && transaction) && (await transaction.commit());
     } catch(error) {
       (!externalTransaction && transaction) && (await transaction.rollback());
