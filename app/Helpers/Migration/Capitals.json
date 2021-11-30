@@ -1,0 +1,388 @@
+{
+  "data": [
+      {
+          "abbr": "AL",
+          "name": "Alabama",
+          "city": "Montgomery",
+          "country": "USA"
+      },
+      {
+          "abbr": "AK",
+          "name": "Alaska",
+          "city": "Juneau",
+          "country": "USA"
+      },
+      {
+          "abbr": "AZ",
+          "name": "Arizona",
+          "city": "Phoenix",
+          "country": "USA"
+      },
+      {
+          "abbr": "AR",
+          "name": "Arkansas",
+          "city": "Little Rock",
+          "country": "USA"
+      },
+      {
+          "abbr": "CA",
+          "name": "California",
+          "city": "Sacramento",
+          "country": "USA"
+      },
+      {
+          "abbr": "CO",
+          "name": "Colorado",
+          "city": "Denver",
+          "country": "USA"
+      },
+      {
+          "abbr": "CT",
+          "name": "Connecticut",
+          "city": "Hartford",
+          "country": "USA"
+      },
+      {
+          "abbr": "DE",
+          "name": "Delaware",
+          "city": "Dover",
+          "country": "USA"
+      },
+      {
+        "abbr": "DC",
+        "name": "District of Columbia",
+        "city": "Washington",
+        "country": "USA"
+      },
+      {
+          "abbr": "FL",
+          "name": "Florida",
+          "city": "Tallahassee",
+          "country": "USA"
+      },
+      {
+          "abbr": "GA",
+          "name": "Georgia",
+          "city": "Atlanta",
+          "country": "USA"
+      },
+      {
+          "abbr": "HI",
+          "name": "Hawaii",
+          "city": "Honolulu",
+          "country": "USA"
+      },
+      {
+          "abbr": "ID",
+          "name": "Idaho",
+          "city": "Boise",
+          "country": "USA"
+      },
+      {
+          "abbr": "IL",
+          "name": "Illinois",
+          "city": "Springfield",
+          "country": "USA"
+      },
+      {
+          "abbr": "IN",
+          "name": "Indiana",
+          "city": "Indianapolis",
+          "country": "USA"
+      },
+      {
+          "abbr": "IA",
+          "name": "Iowa",
+          "city": "Des Moines",
+          "country": "USA"
+      },
+      {
+          "abbr": "KS",
+          "name": "Kansas",
+          "city": "Topeka",
+          "country": "USA"
+      },
+      {
+          "abbr": "KY",
+          "name": "Kentucky",
+          "city": "Frankfort",
+          "country": "USA"
+      },
+      {
+          "abbr": "LA",
+          "name": "Louisiana",
+          "city": "Baton Rouge",
+          "country": "USA"
+      },
+      {
+          "abbr": "ME",
+          "name": "Maine",
+          "city": "Augusta",
+          "country": "USA"
+      },
+      {
+          "abbr": "MD",
+          "name": "Maryland",
+          "city": "Annapolis",
+          "country": "USA"
+      },
+      {
+          "abbr": "MA",
+          "name": "Massachusetts",
+          "city": "Boston",
+          "country": "USA"
+      },
+      {
+          "abbr": "MI",
+          "name": "Michigan",
+          "city": "Lansing",
+          "country": "USA"
+      },
+      {
+          "abbr": "MN",
+          "name": "Minnesota",
+          "city": "Saint Paul",
+          "country": "USA"
+      },
+      {
+          "abbr": "MS",
+          "name": "Mississippi",
+          "city": "Jackson",
+          "country": "USA"
+      },
+      {
+          "abbr": "MO",
+          "name": "Missouri",
+          "city": "Jefferson City",
+          "country": "USA"
+      },
+      {
+          "abbr": "MT",
+          "name": "Montana",
+          "city": "Helana",
+          "country": "USA"
+      },
+      {
+          "abbr": "NE",
+          "name": "Nebraska",
+          "city": "Lincoln",
+          "country": "USA"
+      },
+      {
+          "abbr": "NV",
+          "name": "Nevada",
+          "city": "Carson City",
+          "country": "USA"
+      },
+      {
+          "abbr": "NH",
+          "name": "New Hampshire",
+          "city": "Concord",
+          "country": "USA"
+      },
+      {
+          "abbr": "NJ",
+          "name": "New Jersey",
+          "city": "Trenton",
+          "country": "USA"
+      },
+      {
+          "abbr": "NM",
+          "name": "New Mexico",
+          "city": "Santa Fe",
+          "country": "USA"
+      },
+      {
+          "abbr": "NY",
+          "name": "New York",
+          "city": "Albany",
+          "country": "USA"
+      },
+      {
+          "abbr": "NC",
+          "name": "North Carolina",
+          "city": "Raleigh",
+          "country": "USA"
+      },
+      {
+          "abbr": "ND",
+          "name": "North Dakota",
+          "city": "Bismarck",
+          "country": "USA"
+      },
+      {
+          "abbr": "OH",
+          "name": "Ohio",
+          "city": "Columbus",
+          "country": "USA"
+      },
+      {
+          "abbr": "OK",
+          "name": "Oklahoma",
+          "city": "Oklahoma City",
+          "country": "USA"
+      },
+      {
+          "abbr": "OR",
+          "name": "Oregon",
+          "city": "Salem",
+          "country": "USA"
+      },
+      {
+          "abbr": "PA",
+          "name": "Pennsylvania",
+          "city": "Harrisburg",
+          "country": "USA"
+      },
+      {
+          "abbr": "RI",
+          "name": "Rhode Island",
+          "city": "Providence",
+          "country": "USA"
+      },
+      {
+          "abbr": "SC",
+          "name": "South Carolina",
+          "city": "Columbia",
+          "country": "USA"
+      },
+      {
+          "abbr": "SD",
+          "name": "South Dakota",
+          "city": "Pierre",
+          "country": "USA"
+      },
+      {
+          "abbr": "TN",
+          "name": "Tennessee",
+          "city": "Nashville",
+          "country": "USA"
+      },
+      {
+          "abbr": "TX",
+          "name": "Texas",
+          "city": "Austin",
+          "country": "USA"
+      },
+      {
+          "abbr": "UT",
+          "name": "Utah",
+          "city": "Salt Lake City",
+          "country": "USA"
+      },
+      {
+          "abbr": "VT",
+          "name": "Vermont",
+          "city": "Montpelier",
+          "country": "USA"
+      },
+      {
+          "abbr": "VA",
+          "name": "Virginia",
+          "city": "Richmond",
+          "country": "USA"
+      },
+      {
+          "abbr": "WA",
+          "name": "Washington",
+          "city": "Olympia",
+          "country": "USA"
+      },
+      {
+          "abbr": "WV",
+          "name": "West Virginia",
+          "city": "Charleston",
+          "country": "USA"
+      },
+      {
+          "abbr": "WI",
+          "name": "Wisconsin",
+          "city": "Madison",
+          "country": "USA"
+      },
+      {
+          "abbr": "WY",
+          "name": "Wyoming",
+          "city": "Cheyenne",
+          "country": "USA"
+      },
+      {
+        "abbr": "AB",
+        "name": "Alberta",
+        "city": "Edmonton",
+        "country": "CA"
+       },
+       {
+        "abbr": "BC",
+        "name": "British Columbia",
+        "city": "Victoria",
+        "country": "CA"
+       },
+       {
+        "abbr": "MB",
+        "name": "Manitoba",
+        "city": "Winnipeg",
+        "country": "CA"
+       },
+       {
+        "abbr": "NB",
+        "name": "New Brunswick",
+        "city": "Fredericton",
+        "country": "CA"
+       },
+       {
+        "abbr": "NL",
+        "name": "Newfoundland and Labrador",
+        "city": "St. John'S",
+        "country": "CA"
+       },
+       {
+        "abbr": "NT",
+        "name": "Northwest Territories",
+        "city": "Yellowknife",
+        "country": "CA"
+       },
+       {
+        "abbr": "NS",
+        "name": "Nova Scotia",
+        "city": "Halifax",
+        "country": "CA"
+       },
+       {
+        "abbr": "NU",
+        "name": "Nunavut",
+        "city": "Iqaluit",
+        "country": "CA"
+       },
+       {
+        "abbr": "ON",
+        "name": "Ontario",
+        "city": "Toronto",
+        "country": "CA"
+       },
+       {
+        "abbr": "PE",
+        "name": "Prince Edward Island",
+        "city": "Charlottetown",
+        "country": "CA"
+       },
+       {
+        "abbr": "QC",
+        "name": "Quebec",
+        "city": "Quebec",
+        "country": "CA"
+       },
+       {
+        "abbr": "SK",
+        "name": "Saskatchewan",
+        "city": "Regina",
+        "country": "CA"
+       },
+       {
+        "abbr": "YT",
+        "name": "Yukon",
+        "city": "Whitehorse",
+        "country": "CA"
+       }
+  ]
+}

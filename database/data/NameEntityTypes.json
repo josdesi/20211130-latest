@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name_type_id" : 1,
+    "original_table_id": 0
+  },
+  {
+    "id": 2,
+    "name_type_id" : 1,
+    "original_table_id": 1
+  },
+  {
+    "id": 3,
+    "name_type_id" : 1,
+    "original_table_id": 2
+  }
+]

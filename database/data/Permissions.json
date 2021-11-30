@@ -1,0 +1,17 @@
+[{
+	"id": 1,
+	"title": "feeAgreements.modifyGuarantee",
+	"created_at": null,
+	"updated_at": null
+}, {
+	"id": 2,
+	"title": "feeAgreements.modifyPercentage",
+	"created_at": null,
+	"updated_at": null
+},
+{
+	"id": 3,
+	"title": "newFeeAgreements.use",
+	"created_at": null,
+	"updated_at": null
+}]

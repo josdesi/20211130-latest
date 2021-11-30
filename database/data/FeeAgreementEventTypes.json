@@ -1,0 +1,332 @@
+[{
+	"id": 1,
+	"name": "Created and sent to sign",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:48:59-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 2,
+	"name": "Signed by Hiring Authority",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:00-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 3,
+	"name": "Signed by Production Director",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:00-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 4,
+	"name": "Created and sent to coach validation",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:00-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 5,
+	"name": "Created and sent to operations validation",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:00-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 6,
+	"name": "Declined by Coach",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:01-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 7,
+	"name": "Sent to Coach validation",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:01-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 8,
+	"name": "Validated by Coach",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:01-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 9,
+	"name": "Declined by Operations",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:01-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 10,
+	"name": "Sent to Operations validation",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:02-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 11,
+	"name": "Validated by Operations and sent to sign",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:02-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 12,
+	"name": "Voided by Operations",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:02-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 13,
+	"name": "Voided by Expiration",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:03-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": null
+}, {
+	"id": 14,
+	"name": "Reactivated by Operations",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:03-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": null
+}, {
+	"id": 15,
+	"name": "Signature request preview created",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:03-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 16,
+	"name": "Signature request viewed",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:03-05:00",
+	"associated_hellosign_event_type": "signature_request_viewed",
+	"show_in_history_log": true
+}, {
+	"id": 17,
+	"name": "Signature request downloadable",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:04-05:00",
+	"associated_hellosign_event_type": "signature_request_downloadable",
+	"show_in_history_log": false
+}, {
+	"id": 18,
+	"name": "Signature request sent",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:04-05:00",
+	"associated_hellosign_event_type": "signature_request_sent",
+	"show_in_history_log": true
+}, {
+	"id": 19,
+	"name": "Signature request declined",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:04-05:00",
+	"associated_hellosign_event_type": "signature_request_declined",
+	"show_in_history_log": true
+}, {
+	"id": 20,
+	"name": "Signature request reassigned",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:04-05:00",
+	"associated_hellosign_event_type": "signature_request_reassigned",
+	"show_in_history_log": true
+}, {
+	"id": 21,
+	"name": "Signature request reminded",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:05-05:00",
+	"associated_hellosign_event_type": "signature_request_remind",
+	"show_in_history_log": true
+}, {
+	"id": 22,
+	"name": "Signature request remind",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:05-05:00",
+	"associated_hellosign_event_type": "signature_request_remind",
+	"show_in_history_log": true
+}, {
+	"id": 23,
+	"name": "Signature request email bounced",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:05-05:00",
+	"associated_hellosign_event_type": "signature_request_email_bounce",
+	"show_in_history_log": true
+}, {
+	"id": 24,
+	"name": "Signature request invalid",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:05-05:00",
+	"associated_hellosign_event_type": "signature_request_invalid",
+	"show_in_history_log": true
+}, {
+	"id": 25,
+	"name": "Signature request prepared",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:06-05:00",
+	"associated_hellosign_event_type": "signature_request_prepared",
+	"show_in_history_log": true
+}, {
+	"id": 26,
+	"name": "Unknow error",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:06-05:00",
+	"associated_hellosign_event_type": "unknown_error",
+	"show_in_history_log": false
+}, {
+	"id": 27,
+	"name": "Contract viewed by Hiring Authority",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:06-05:00",
+	"associated_hellosign_event_type": "signature_request_viewed",
+	"show_in_history_log": true
+}, {
+	"id": 28,
+	"name": "Contract viewed by Production Director",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:06-05:00",
+	"associated_hellosign_event_type": "signature_request_viewed",
+	"show_in_history_log": true
+}, {
+	"id": 29,
+	"name": "Signature request completed",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:07-05:00",
+	"associated_hellosign_event_type": "signature_request_all_signed",
+	"show_in_history_log": false
+}, {
+	"id": 30,
+	"name": "Voided by expiration",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:07-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 31,
+	"name": "About expire",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:07-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 32,
+	"name": "Validation request canceled",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:08-05:00",
+	"associated_hellosign_event_type": "",
+	"show_in_history_log": true
+}, {
+	"id": 33,
+	"name": "Restored",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:08-05:00",
+	"associated_hellosign_event_type": "",
+	"show_in_history_log": true
+}, {
+	"id": 34,
+	"name": "Signer's email updated",
+	"created_at": null,
+	"updated_at": "2021-07-01T03:49:08-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 35,
+	"name": "Validated by Coach and sent to sign",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:08-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 36,
+	"name": "Validated by Regional Director",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:09-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 37,
+	"name": "Validated by Regional Director and Sent to sign",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:09-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 38,
+	"name": "Declined by Regional Director",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:09-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 39,
+	"name": "Opened By Hiring Authority",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:09-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 40,
+	"name": "Opened By Production Director",
+	"created_at": "2021-02-22T13:06:45-06:00",
+	"updated_at": "2021-07-01T03:49:10-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 41,
+	"name": "Resent with docusign",
+	"created_at": "2021-04-18T19:57:15-05:00",
+	"updated_at": "2021-07-01T03:49:10-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 42,
+	"name": "Created as signed with attachment by Operations",
+	"created_at": "2021-04-18T19:57:15-05:00",
+	"updated_at": "2021-07-01T03:49:10-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 43,
+	"name": "Unmanaged signature process validated by Operations",
+	"created_at": "2021-06-14T00:37:47-05:00",
+	"updated_at": "2021-07-01T03:49:10-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 44,
+	"name": "Created unmanaged and sent to Operations validation",
+	"created_at": "2021-06-14T00:37:48-05:00",
+	"updated_at": "2021-07-01T03:49:11-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}, {
+	"id": 45,
+	"name": "Updated by operations",
+	"created_at": "2021-07-01T03:49:11-05:00",
+	"updated_at": "2021-07-01T03:49:11-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+},
+{
+	"id": 46,
+	"name": "Created on behalf and sent to sign",
+	"created_at": "2021-07-01T03:49:11-05:00",
+	"updated_at": "2021-07-01T03:49:11-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+},
+{
+	"id": 47,
+	"name": "Created on behalf and sent to Operations Validation",
+	"created_at": "2021-07-01T03:49:11-05:00",
+	"updated_at": "2021-07-01T03:49:11-05:00",
+	"associated_hellosign_event_type": null,
+	"show_in_history_log": true
+}]
