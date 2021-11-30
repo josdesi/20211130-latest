@@ -13,7 +13,6 @@
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use('Factory');
 const UnsubscribeReasonType = use('App/Models/UnsubscribeReasonType');
-const Database = use('Database');
 const { UnsubscribeReasonTypes } = use('App/Helpers/Globals');
 
 class UnsubscribeReasonTypeSeeder {
