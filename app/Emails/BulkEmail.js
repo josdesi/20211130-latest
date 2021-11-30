@@ -148,7 +148,7 @@ class BulkEmail {
         const { message, code, response } = error;
 
         // Extract response msg
-        const { headers, body } = response;
+        const { body } = response;
 
         appInsights.defaultClient.trackException({ exception: body });
 

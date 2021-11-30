@@ -10,7 +10,7 @@ const Event = use('Event');
 const EventType = use('App/Helpers/Events');
 
 const appInsights = require('applicationinsights');
-const { DocusignAuditEventActions, FeeAgreementStatus, FeeAgreementEventType, companyType, FeeAgreementSignerRole} = use('App/Helpers/Globals');
+const { DocusignAuditEventActions, FeeAgreementStatus, FeeAgreementEventType, FeeAgreementSignerRole} = use('App/Helpers/Globals');
 const CompanyFeeAgreement = use('App/Models/CompanyFeeAgreement');
 const FeeAgreementStatusCalculator = use('App/Helpers/FeeAgreementStatusCalculator');
 const SignerStatus = {

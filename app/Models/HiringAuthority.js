@@ -2,7 +2,6 @@
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model');
-const { hiringAuthorityStatus } = use('App/Helpers/Globals');
 
 class HiringAuthority extends Model {
   static boot () {

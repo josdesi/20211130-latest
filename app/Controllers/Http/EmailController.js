@@ -4,7 +4,6 @@
 const Services = new (use('App/Helpers/Services'))();
 
 //Models
-const SendgridEmailValidation = use('App/Models/SendgridEmailValidation');
 
 //Utils
 const appInsights = require('applicationinsights');
