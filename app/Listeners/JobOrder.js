@@ -1,7 +1,7 @@
 'use strict'
 //Utils
 const appInsights = require('applicationinsights');
-const { JobOrderTypeSchemes, EntityTypes, OperationType, AdditionalRecruiterStatus, AdditionalRecruiterTypes, DateFormats, JobOrderStatusSchemes } = use('App/Helpers/Globals');
+const { JobOrderTypeSchemes, EntityTypes, OperationType, AdditionalRecruiterStatus, AdditionalRecruiterTypes, DateFormats } = use('App/Helpers/Globals');
 const Agenda = use('Services/Agenda');
 const { JobNames } = use('App/Scheduler/Constants');
 const OperatingMetricConfiguration = use('App/Models/OperatingMetricConfiguration');
@@ -14,7 +14,6 @@ const JobOrderRepository = new (use('App/Helpers/JobOrderRepository'))();
 const InventoryNotification = new (use('App/Notifications/InventoryNotifications'))();
 const OperatingNotification = new (use('App/Notifications/OperatingNotifications'))();
 const CandidateAndJobMatchNotification = new (use('App/Notifications/CandidateAndJobMatchNotification'))();
-const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 const RequestAdditionalRecruiterNotifications = new (use('App/Notifications/RequestAdditionalRecruiterNotifications'))();
 
 

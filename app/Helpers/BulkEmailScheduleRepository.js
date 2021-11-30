@@ -1,8 +1,6 @@
 'use strict';
 
 //Models
-const SearchProject = use('App/Models/SearchProject');
-const User = use('App/Models/User');
 const EmailBody = use('App/Models/EmailBody');
 const EmailHistory = use('App/Models/EmailHistory');
 const ScheduledEmail = use('App/Models/ScheduledEmail');

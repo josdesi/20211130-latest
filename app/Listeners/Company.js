@@ -2,8 +2,6 @@
 
 //Utils
 const appInsights = require('applicationinsights');
-const { CompanyFeeAgreement } = require('../Helpers/Events');
-const Database = use('Database');
 const { notificationTypes } = use('App/Notifications/Constants');
 const NotificationService = use('Services/Notification');
 const CompanyReassureEmail = new (use('App/Emails/CompanyReassureEmail'))();
@@ -14,8 +12,6 @@ const NameDirectoryUpdater = new (use('App/Helpers/NameDirectoryUpdater'))();
 const InventoryNotification = new (use('App/Notifications/InventoryNotifications'))();
 const CompanyNotification = new (use('App/Notifications/CompanyNotification'))();
 const CompanyRepository = new (use('App/Helpers/CompanyRepository'))();
-const HiringAuthority = use('App/Models/HiringAuthority');
-
 const Company = {
   notifyOnCreation: async ({company}) => {
     try {
