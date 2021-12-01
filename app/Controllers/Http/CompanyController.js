@@ -378,7 +378,7 @@ class CompanyController {
       const  { excludeListings } = request.all();
       const userId = auth.current.user.id;
 
-      const company = await CompanyRepository.details(params.id, !(excludeListings === 'true'), userId);
+      const company = await CompanyRepository.details(params.id, (excludeListings !== 'true'), userId);
       if (!company) {
         return response.status(404).send({
           message: 'Company Not Found',
