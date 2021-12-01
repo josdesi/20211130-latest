@@ -9,13 +9,10 @@ class CompanyTypesSchema extends Schema {
     })
 
     this.schedule(async(transaction) => {
-      try {
         await Database.table('sendgrid_configurations')
           .insert({id: 10, type: 'feePDFCCEmail', sender: 'clientservice@gogpac.com', template_id: 'd-4bd9735d71fc444c9da1e03011767cff'})
           .transacting(transaction);
-      } catch(error) {
-        throw error;
-      }
+
     });
   }
 
