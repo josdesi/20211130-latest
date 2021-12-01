@@ -18,15 +18,13 @@ const defaultSizeLimit = '5mb';
  */
 const uploadFile = async (path, source) => {
 
-  try {
+  
     if (source instanceof Stream) {
       await Drive.disk('azure').putStream(path, source);
     } else {
       await Drive.disk('azure').put(path, source);
     }
-  } catch (error) {
-    throw error;
-  }
+  
 
   if (await Drive.disk('azure').exists(path)) {
     const url = await Drive.disk('azure').getUrl(path);
@@ -45,11 +43,9 @@ const uploadFile = async (path, source) => {
  */
 const moveFile = async (fileName, path) => {
   const decodedPath = decodeURIComponent(path);
-  try {
+
     await Drive.disk('azure').move('tmp/'+ decodeURIComponent(fileName), decodedPath);
-  } catch (error) {
-    throw error;
-  }
+
 
   if (await Drive.disk('azure').exists(decodedPath)) {
     const url = await Drive.disk('azure').getUrl(decodedPath);

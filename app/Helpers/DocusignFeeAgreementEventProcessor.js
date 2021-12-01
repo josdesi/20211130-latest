@@ -75,7 +75,7 @@ class DocusignFeeAgreementEventProcessor {
 
   async refreshAuditEvents({feeAgreement, envelope, throwError = true}) {
     
-    try {
+    
       const rawAuditEvents = await DocuSign.listAuditEvents(feeAgreement.contract_id);
       const currentEnvelope = envelope || (await DocuSign.getEnvelope(feeAgreement.contract_id, 'recipients'));
       if (!rawAuditEvents) return [];
@@ -84,9 +84,7 @@ class DocusignFeeAgreementEventProcessor {
       const formatedAuditEventsToScan = await (await Promise.all(formatedAuditEvents.filter(({id}) => !processedAuditEvents[id]).map(async (event) => this.saveAuditEvent({feeAgreement, formattedAuditEvent: event})))).filter(event => !!event);
 
       await this.scanForEvents({feeAgreement, formatedAuditEventsToScan, currentEnvelope})
-    } catch(error) {
-      throw error;
-    }
+    
   }
 
   async scanForEvents({feeAgreement, formatedAuditEventsToScan, currentEnvelope}) {
