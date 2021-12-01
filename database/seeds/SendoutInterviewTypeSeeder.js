@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const Database = use('Database');
 const { SendoutInterviewTypesSchemes } = use('App/Helpers/Globals');
 

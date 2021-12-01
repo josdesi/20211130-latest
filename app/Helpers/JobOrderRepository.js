@@ -25,7 +25,6 @@ const {
   AdditionalRecruiterStatus,
   AdditionalRecruiterTypes,
   userRoles,
-  activityLogTypes,
   userPermissions
 } = use('App/Helpers/Globals');
 const { moveFile } = use('App/Helpers/FileHelper');
@@ -57,10 +56,8 @@ const JobOrderRecruiterAssignment = use('App/Models/JobOrderRecruiterAssignment'
 const OperatingMetricConfiguration = use('App/Models/OperatingMetricConfiguration');
 const JobOrderOperatingMetric = use('App/Models/JobOrderOperatingMetric');
 const JobOrderTypeLog = use('App/Models/JobOrderTypeLog');
-const JobOrderBulkActivityReference = use('App/Models/JobOrderBulkActivityReference');
 const JobOrderChangeLog = use('App/Models/JobOrderChangeLog');
 const JobOrderAdditionalRecruiter = use('App/Models/JobOrderAdditionalRecruiter');
-const Team = use('App/Models/Team');
 
 const userBuilder = (builder) => {
   builder.setHidden(['personal_information_id', 'user_id', 'email_signature', ...auditFields]);
@@ -1700,7 +1697,7 @@ class JobOrderRepository {
     if (!jobOrder) {
       return null;
     }
-    const whiteSheet = await WhiteSheetRepository.getByJobOrder(jobOrderActivityLog.job_order_id);
+    await WhiteSheetRepository.getByJobOrder(jobOrderActivityLog.job_order_id);
     const additionalRecruiter =  await this.existAdditionalRecruiter({
       jobOrderId: job_order_id,
       status: AdditionalRecruiterStatus.Approved,

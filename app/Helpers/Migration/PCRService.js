@@ -75,11 +75,7 @@ class PCRService {
         await this.initialize();
       }
       let page = 1;
-      let response = {
-        data : {
-          Results : []
-        }
-      }
+      let response = null;
       const contacts = [];
       do {
         response = await promiseRetry(

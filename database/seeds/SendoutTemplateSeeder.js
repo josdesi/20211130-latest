@@ -11,8 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
-const Database = use('Database');
 
 // Seeder
 const { SendoutTypesSchemes } = use('App/Helpers/Globals');

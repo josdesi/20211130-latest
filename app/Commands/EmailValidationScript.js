@@ -16,7 +16,7 @@ class EmailValidationScript extends Command {
     this.info('Sendgrid email validation started');
 
     const self = this;
-    const response = await EmailValidation.runScript(self);
+    await EmailValidation.runScript(self);
   }
 }
 

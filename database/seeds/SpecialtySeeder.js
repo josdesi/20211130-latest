@@ -11,17 +11,16 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const Specialty = use('App/Models/Specialty');
 const Industry = use('App/Models/Industry');
 const { specialties } = require('../data/IndustriesData');
 
 class SpecialtySeeder {
   static async run() {
-    for (const iterator in specialties) {
-      const { title, industry } = specialties[iterator];
+    for (const iterator of specialties) {
+      const { title, industry } = iterator;
       const _industry = await Industry.findBy('title', industry);
-      const specialty = await Specialty.findOrCreate({ title, industry_id: _industry.id });
+      await Specialty.findOrCreate({ title, industry_id: _industry.id });
     }
   }
 }

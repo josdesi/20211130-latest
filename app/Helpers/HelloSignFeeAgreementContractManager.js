@@ -1,11 +1,8 @@
 'use strict';
 
 const HelloSign = use('Services/HelloSign');
-const Database = use('Database');
 const ModulePresetsConfigRepository = new (use('App/Helpers/ModulePresetsConfigRepository'))();
 const { FeeAgreementPaymentSchemes, FeeAgreementStatus } = use('App/Helpers/Globals');
-const HiringAuthority = use('App/Models/HiringAuthority');
-const User = use('App/Models/User');
 class HelloSignFeeAgreementContractManager {
   constructor(feaAgreementConfiguration) {
     this.feeAgreementConfiguration = feaAgreementConfiguration;
@@ -24,7 +21,7 @@ class HelloSignFeeAgreementContractManager {
     const templateId = await this.getCorrespondingTemplateId(feeAgreement);
     const templateDetails = await HelloSign.getTemplateDetails(templateId);
     const customFieldsThatApply = templateDetails.template.custom_fields.map(({name}) => name);
-    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {

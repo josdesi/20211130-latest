@@ -896,7 +896,7 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
       if (sendout.job_order_accountable_id !== jobOrderAccountableIdTemp) {
@@ -914,7 +914,7 @@ class SendOutRepository {
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
       if (sendout.candidate_accountable_id !== candidateAccountableIdTemp) {
@@ -1050,7 +1050,7 @@ class SendOutRepository {
         if (sendMailToHA && !currentSentEmailToHA) {
           if (attachments && !attachments.length && attachments.candidate)
             allAttachments.push(...attachments.candidate);
-          if (allInterviews && allInterviews.length === 0) {
+          if (allInterviews.length === 0) {
             const data = await SendoutInterview.query().where('sendout_id', sendoutId).fetch();
             const dataJson = data.toJSON();
             allInterviews.push(...dataJson);
@@ -1066,7 +1066,7 @@ class SendOutRepository {
 
       const sendoutDetails = await this.details(sendoutId, this.defaultRelations);
 
-      if (payloadActivityLog && payloadActivityLog.logTypeId) {
+      if (payloadActivityLog.logTypeId) {
         Event.fire(EventTypes.Sendout.Updated, {
           candidateId: sendout.candidate_id,
           jobOrderId: sendout.job_order_id,
@@ -2279,13 +2279,13 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
 

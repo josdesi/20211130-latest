@@ -12,7 +12,7 @@ class PermissionsSchema extends Schema {
     })
 
     this.schedule(async (transaction) => {
-      try {
+      
         const recruitersQuery = `
         INSERT INTO user_has_permissions (user_id, permission_id)
         SELECT distinct(recruiter_id), ${userPermissions.newFeeAgreements.use} FROM recruiter_has_industries WHERE coach_id IN (
@@ -28,9 +28,7 @@ class PermissionsSchema extends Schema {
         
         await Database.raw(recruitersQuery).transacting(transaction);
         await Database.raw(coachesQuery).transacting(transaction);
-      } catch(ex) {
-        throw ex;
-      }
+      
     }); 
   }
 

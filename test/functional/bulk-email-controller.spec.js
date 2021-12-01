@@ -76,7 +76,6 @@ const html = '<strong>This</strong> email was part of a test, please ignore it!'
 before(async () => {
   const optOutQuery = Database.table('email_opt_outs').select('item_id');
   const unsubscribesQuery = Database.table('email_user_unsubscribes').select('email');
-  const invalidEmailQuery = Database.table('sendgrid_email_validations').select('email').where('is_valid', false);
   testCandidates = await Database.table('contacts_directory')
     .select(['*', 'origin_table_id as id'])
     .where('role_id', nameTypes.Candidate)

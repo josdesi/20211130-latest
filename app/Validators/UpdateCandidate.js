@@ -1,5 +1,4 @@
 'use strict';
-const Database = use('Database');
 class UpdateCandidate {
   get rules() {
     const candidateId = this.ctx.params.id
