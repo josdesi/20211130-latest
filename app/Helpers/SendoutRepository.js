@@ -1533,13 +1533,13 @@ class SendOutRepository {
       company: joborder ? joborder.company.name : '',
       hiring_authority: hiring_authority.full_name || '',
       candidate: candidate ? candidate.personalInformation.full_name : '',
-      company_recruiter: companyOwner ? companyOwner.full_name : joborder.recruiter.full_name,
-      company_recruiter_initials: companyOwner ? companyOwner.initials : joborder.recruiter.initials,
+      company_recruiter: companyOwner ? companyOwner?.full_name : joborder.recruiter.full_name,
+      company_recruiter_initials: companyOwner ? companyOwner?.initials : joborder.recruiter.initials,
       company_coach: companyCoach ? companyCoach.full_name : '',
       candidate_recruiter: candidateOwner
-        ? candidateOwner.full_name
+        ? candidateOwner?.full_name
         : candidate.recruiter.personalInformation.full_name,
-      candidate_recruiter_initials: candidateOwner ? candidateOwner.initials : candidate.recruiter.initials,
+      candidate_recruiter_initials: candidateOwner ? candidateOwner?.initials : candidate.recruiter.initials,
       candidate_coach: candidateCoach ? candidateCoach.full_name : '',
     };
 
@@ -1859,7 +1859,7 @@ class SendOutRepository {
     if (statusId === SendoutStatusSchemes.Placed) return SendoutStatusSchemes.Placed;
 
     const sendouts = await Sendout.query().where(whereClause).fetch();
-    const jsonSendouts = sendouts.toJSON();
+    const jsonSendouts = sendouts?.toJSON();
 
     if (jsonSendouts && jsonSendouts.length === 0) return statusId;
 
@@ -1912,7 +1912,7 @@ class SendOutRepository {
   async updateJobOrderStatus(sendout, statusId, userId, trx) {
     const sendoutId = sendout.id;
     const jobOrder = await sendout.joborder().fetch();
-    const jobOrderId = jobOrder.id;
+    const jobOrderId = jobOrder?.id;
     const currentStatusId = jobOrder.status_id;
 
     if (!jobOrder) return;
@@ -1972,7 +1972,7 @@ class SendOutRepository {
     const sendoutId = sendout.id;
     const candidate = await sendout.candidate().fetch();
     const candidateId = candidate.id;
-    const currentStatusId = candidate.status_id;
+    const currentStatusId = candidate?.status_id;
 
     if (!candidate) return;
     if (currentStatusId === CandidateStatusSchemes.Placed) return;
@@ -2424,7 +2424,7 @@ class SendOutRepository {
       Company: ${jobOrder ? jobOrder.company.name : ''} <br>
       Hiring Authority: ${hiringAuthority ? hiringAuthority.full_name : ''} <br>
       Candidate: ${candidate ? candidate.personalInformation.full_name : ''} <br>
-      Functional Title: ${jobOrder ? jobOrder.title : ''} <br>
+      Functional Title: ${jobOrder ? jobOrder?.title : ''} <br>
     `;
 
     if (payload && parseBoolean(deleted)) {
