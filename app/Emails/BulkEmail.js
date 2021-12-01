@@ -483,7 +483,7 @@ class BulkEmail {
         );
       };
 
-      const { itemIds, itemEmails } = await this.getRecipientsIdsAndEmails(recipients);
+      const { itemIds, itemEmails } = this.getRecipientsIdsAndEmails(recipients);
 
       const result = await BulkEmailOptOutRepository.getOptOutEmailsByIdsAndEmails(itemIds, itemEmails);
       if (result.code !== 200) throw result;
