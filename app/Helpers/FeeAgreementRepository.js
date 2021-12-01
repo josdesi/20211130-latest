@@ -105,7 +105,6 @@ class FeeAgreementRepository {
       specialtyIds: this.inQueryResolver,
       subspecialtyIds: this.inQueryResolver,
       guaranteeDaysIn: this.inQueryResolver,
-      regionalDirectorIds: this.inQueryResolver,
       signatureProcessTypeId: this.inQueryResolver
     };
     this._orderColumnsMap = {
@@ -1411,7 +1410,7 @@ class FeeAgreementRepository {
   async createSignatureRequestDraftWithTemplate({feeAgreement, company, hiringAuthority, productionDirector, userId, customFieldsThatApply}) {
     const config = await ModulePresetsConfigRepository.getById('feeAgreement');
     const { defaultPayload, defaultCCRole, unClaimedDraftPayload } = config.data.signatureRequest;
-    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {
@@ -2022,7 +2021,7 @@ class FeeAgreementRepository {
       throw new NotFoundException(Antl.formatMessage('feeAgreement.error.helloSignTemplateNotFound'));
     }
     const customFieldsThatApply = templateDetails.template.custom_fields.map(({name}) => name);
-    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {
@@ -2585,16 +2584,7 @@ class FeeAgreementRepository {
     this.feeAgreementStatusCalculator.getCurrentResponsible(input_current_status_id, feeAgreement);
   }
 
-  async getFullName(userId) {
-    const details = await UserRepository.getDetails(userId);
-    return details.full_name;
-  }
 
-  operatorFilterResolverFactory(operator) {
-    return (query, column, value) => {
-      query.where(column, operator, value);
-    };
-  }
 
   applyKeywordFilters(query, keywordColumns, value) {
     query.where(function() {

@@ -21,7 +21,7 @@ class HelloSignFeeAgreementContractManager {
     const templateId = await this.getCorrespondingTemplateId(feeAgreement);
     const templateDetails = await HelloSign.getTemplateDetails(templateId);
     const customFieldsThatApply = templateDetails.template.custom_fields.map(({name}) => name);
-    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {
