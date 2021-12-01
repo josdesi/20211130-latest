@@ -237,7 +237,6 @@ class FeeAgreementNotification {
   async getValidatedByCoachNotifications(feeAgreement) {
     const {company, recruiter } = await this.getBasicData(feeAgreement);
     const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
-    const userIds = operationsTeamUsers.rows.map(({id}) => id);
     const drawerToOpen = feeAgreement.verbiage_changes_requested ? 'FeeAgreementVerbiageValidation' : 'FeeAgreementValidation'; 
     const notifications = {
       recruiter: { 
