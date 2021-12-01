@@ -1,0 +1,9 @@
+{
+  "templates_per_payment_scheme": {
+    "standard": "d9dfbf7a-19df-4da1-9a6d-7820c2eb8eed",
+    "basesalary": "11ec1268-a62e-4125-a55a-419e521f46f3",
+    "conversion": "901b892c-d1ef-422f-b2e0-58e469a339bd",
+    "flat_with_guarantee": "ac3f6762-aed1-404f-8f40-457d75b387bd",
+    "flat_without_guarantee": "07abec86-f3a7-436c-86dc-ea774fc27cfa"
+  }
+}

@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "name": "Sendout created",
+    "show_in_history_log": true
+  },
+  {
+    "id": 2,
+    "name": "Job Order status changed",
+    "show_in_history_log": false
+  },
+  {
+    "id": 3,
+    "name": "Candidate status changed",
+    "show_in_history_log": false
+  },
+  {
+    "id": 4,
+    "name": "Invite .ics created to Hiring Authority",
+    "show_in_history_log": false
+  },
+  {
+    "id": 5,
+    "name": "Email sent to Hiring Authority",
+    "show_in_history_log": true
+  },
+  {
+    "id": 6,
+    "name": "Error when sending the email to Hiring Authority",
+    "show_in_history_log": false
+  },
+  {
+    "id": 7,
+    "name": "Error - The Hiring Autority's email is not valid",
+    "show_in_history_log": false
+  },
+  {
+    "id": 8,
+    "name": "Error - The Hiring Authority's email bounced the mail",
+    "show_in_history_log": false
+  },
+  {
+    "id": 9,
+    "name": "Sendout re-sent to Hiring Authority",
+    "show_in_history_log": false
+  },
+  {
+    "id": 10,
+    "name": "Sendout copy sent to another email",
+    "show_in_history_log": false
+  },
+  {
+    "id": 11,
+    "name": "Email sent to Operations Team",
+    "show_in_history_log": false
+  },
+  {
+    "id": 12,
+    "name": "Error when sending the email to Operations Team",
+    "show_in_history_log": false
+  },
+  {
+    "id": 13,
+    "name": "Reminder created for Hiring Authority",
+    "show_in_history_log": false
+  },
+  {
+    "id": 14,
+    "name": "Reminder sent to Hiring Authority (1 hr before interview)",
+    "show_in_history_log": true
+  },
+  {
+    "id": 15,
+    "name": "Error when sending the email reminder to Hiring Authority",
+    "show_in_history_log": false
+  },
+  {
+    "id": 16,
+    "name": "Reminder created for Candidate",
+    "show_in_history_log": false
+  },
+  {
+    "id": 17,
+    "name": "Reminder sent to Candidate",
+    "show_in_history_log": false
+  },
+  {
+    "id": 18,
+    "name": "Error when sending the email reminder to Candidate",
+    "show_in_history_log": false
+  },
+  {
+    "id": 19,
+    "name": "Reminder created for Candidate's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 20,
+    "name": "Reminder sent to Candidate's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 21,
+    "name": "Error when sending the email reminder to Candidate's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 22,
+    "name": "Reminder created for Job Order's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 23,
+    "name": "Reminder sent to Job Order's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 24,
+    "name": "Error when sending the email reminder to Job Order's Recruiter",
+    "show_in_history_log": false
+  },
+  {
+    "id": 25,
+    "name": "{{user_name}} marked the sendout as No Offer",
+    "show_in_history_log": true
+  },
+  {
+    "id": 26,
+    "name": "{{user_name}} marked the sendout as Declined",
+    "show_in_history_log": true
+  },
+  {
+    "id": 27,
+    "name": "Sendover created",
+    "show_in_history_log": true
+  },
+  {
+    "id": 28,
+    "name": "{{user_name}} scheduled a new interview",
+    "show_in_history_log": true
+  },
+  {
+    "id": 29,
+    "name": "{{user_name}} edited an Interview",
+    "show_in_history_log": true
+  },
+  {
+    "id": 30,
+    "name": "Delete all reminders",
+    "show_in_history_log": false
+  },
+{
+    "id": 31,
+    "name": "{{user_name}} switched this sendover into sendout (with email)",
+    "show_in_history_log": true
+  },
+  {
+    "id": 32,
+    "name": "{{user_name}} switched this sendover into sendout (without email)",
+    "show_in_history_log": true
+  },
+  {
+    "id": 33,
+    "name": "Reminder sent to Candidate (24 hrs before interview)",
+    "show_in_history_log": true
+  },
+  {
+    "id": 34,
+    "name": "Reminder sent to Candidate (1 hr before interview)",
+    "show_in_history_log": true
+  },
+  {
+    "id": 35,
+    "name": "Interview reminders scheduled",
+    "show_in_history_log": true
+  },
+  {
+    "id": 36,
+    "name": "Interview reminders sent",
+    "show_in_history_log": false
+  },
+  {
+    "id": 37,
+    "name": "{{user_name}} marked the sendover as No Offer",
+    "show_in_history_log": true
+  },
+  {
+    "id": 38,
+    "name": "{{user_name}} marked the sendover as Declined",
+    "show_in_history_log": true
+  },
+  {
+    "id": 39,
+    "name": "{{user_name}} marked the sendover as Active",
+    "show_in_history_log": true
+  },
+  {
+    "id": 40,
+    "name": "{{user_name}} marked the sendout as Active",
+    "show_in_history_log": true
+  },
+  {
+    "id": 41,
+    "name": "{{user_name}} marked the sendout as Placed",
+    "show_in_history_log": true
+  },
+  {
+    "id": 42,
+    "name": "{{user_name}} has changed fee amount from {{fee_old}} to {{fee_new}}",
+    "show_in_history_log": true
+  },
+  {
+    "id": 43,
+    "name": "{{user_name}} has changed Job Order Accountable from {{accountable_old}} to {{accountable_new}}",
+    "show_in_history_log": true
+  },
+  {
+    "id": 44,
+    "name": "{{user_name}} has changed Candidate Accountable from {{accountable_old}} to {{accountable_new}}",
+    "show_in_history_log": true
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "id": 0,
+    "name_type_id" : 0,
+    "original_table_id": 0,
+    "title": "Undefined"
+  },
+  {
+    "id": 1,
+    "name_type_id" : 0,
+    "original_table_id": 1,
+    "title": "Candidate"
+  },
+  {
+    "id": 2,
+    "name_type_id" : 0,
+    "original_table_id": 2,
+    "title": "Hiring Authority"
+  },
+
+
+  {
+    "id": 3,
+    "name_type_id" : 1,
+    "original_table_id": 1,
+    "title": "Ongoing"
+  },
+  {
+    "id": 4,
+    "name_type_id" : 1,
+    "original_table_id": 2,
+    "title": "Sendout"
+  },
+  {
+    "id": 5,
+    "name_type_id" : 1,
+    "original_table_id": 3,
+    "title": "Sendover"
+  },
+  {
+    "id": 6,
+    "name_type_id" : 1,
+    "original_table_id": 4,
+    "title": "Placed"
+  },
+  {
+    "id": 7,
+    "name_type_id" : 1,
+    "original_table_id": 5,
+    "title": "Inactive"
+  },
+
+
+  {
+    "id": 8,
+    "name_type_id" : 2,
+    "original_table_id": 1,
+    "title": "Active"
+  },
+  {
+    "id": 9,
+    "name_type_id" : 2,
+    "original_table_id": 0,
+    "title": "Inactive"
+  }
+]
