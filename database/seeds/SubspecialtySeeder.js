@@ -18,8 +18,8 @@ const { subspecialties } = require('../data/IndustriesData');
 
 class SubspecialtySeeder {
   static async run() {
-    for (const iterator in subspecialties) {
-      const { title, industry, specialty } = subspecialties[iterator];
+    for (const iterator of subspecialties) {
+      const { title, industry, specialty } = iterator;
       const _industry = await Industry.findBy('title', industry);
       const _specialty = await Specialty.query()
         .where({ title: specialty })
