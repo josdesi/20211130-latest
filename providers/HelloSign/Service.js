@@ -128,10 +128,7 @@ class HelloSignService {
         signature_id: signatureId,
         email_address: email,
       });
-      return response.data;
-    
-      throw error;
-    
+      return response.data;    
   }
 
 }
