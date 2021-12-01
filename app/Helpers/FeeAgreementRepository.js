@@ -3077,10 +3077,9 @@ class FeeAgreementRepository {
 
   isSentDateBeforeSignDate({inputSentDate, inputSignedDate}) {
     const validatedDate = inputSentDate instanceof Date ? inputSentDate : new Date(inputSentDate);
-    if (Number.isNaN(validatedDate)) throw new Error('validated_date is not a valid date');
 
     const signedDate = inputSignedDate instanceof Date ? inputSignedDate : new Date(inputSignedDate);
-    if (Number.isNaN(signedDate)) throw new Error('signed_date is not a valid date');
+    
 
     return signedDate.getTime() >= validatedDate.getTime();
   }
