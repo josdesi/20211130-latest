@@ -150,7 +150,6 @@ class CompanyRepository {
           email,
           website,
           link_profile,
-          created_by: user_id,
           fee_agreement_url,
           file_name,
           created_by: user_id,

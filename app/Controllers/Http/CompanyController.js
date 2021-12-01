@@ -46,10 +46,7 @@ class CompanyController {
       'country': 'city.country',
       'location': 'city.title',
       'cp.created_at': 'cp.created_at',
-      'last_activity_date': 'last_activity_date',
-      'industry': 'industry',
-      'specialty': 'specialty'
-    };
+      'last_activity_date': 'last_activity_date'};
 
     const buildDefaultMultipleFilterEntry = (column) => ({
       resolver: multipleWhereResolver.bind(this),
