@@ -236,7 +236,7 @@ class FeeAgreementNotification {
 
   async getValidatedByCoachNotifications(feeAgreement) {
     const {company, recruiter } = await this.getBasicData(feeAgreement);
-    const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
+    await UserRepository.getOperationsTeamUsers();
     const drawerToOpen = feeAgreement.verbiage_changes_requested ? 'FeeAgreementVerbiageValidation' : 'FeeAgreementValidation'; 
     const notifications = {
       recruiter: { 
@@ -319,7 +319,7 @@ class FeeAgreementNotification {
   
   async getValidatedByOperationsAndSentToSignNotifications(feeAgreement) {
     const {coach, company } = await this.getBasicData(feeAgreement);
-    const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
+    await UserRepository.getOperationsTeamUsers();
     const notifications = {
       coach: {
         userIds: coach.id,
@@ -612,7 +612,6 @@ class FeeAgreementNotification {
   async getAboutExpireNotifications(feeAgreement, daysLeft) {
     const {company, coach, recruiter} = await this.getBasicData(feeAgreement);
     const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
-    const userIds = operationsTeamUsers.rows.map(({id}) => id);
     const drawerToOpen = feeAgreement.verbiage_changes_requested ? 'FeeAgreementVerbiageValidation' : 'FeeAgreementValidation';
     const recruiterNotification = {
       userIds: recruiter.id,
