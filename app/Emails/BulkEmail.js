@@ -676,7 +676,7 @@ class BulkEmail {
    */
   async getInvalidEmails({ recipients }, blockedByResendItems) {
     try {
-      const { itemEmails } = await this.getRecipientsIdsAndEmails(recipients);
+      const { itemEmails } = this.getRecipientsIdsAndEmails(recipients);
 
       //These are the invalid emails, they are taken from the sendgrid validations
       const result = await Services.getSendgridValidationEmails('invalid', itemEmails);
