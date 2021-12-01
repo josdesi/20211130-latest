@@ -1,5 +1,5 @@
 //Utils
-const { JobOrderTypeSchemes, DateFormats,EntityTypes } = use('App/Helpers/Globals');
+const { DateFormats,EntityTypes } = use('App/Helpers/Globals');
 const { every } = use('lodash');
 const { JobNames } = use('App/Scheduler/Constants');
 const moment = use('moment');
@@ -8,7 +8,6 @@ const { notificationTypes } = use('App/Notifications/Constants');
 
 //Repositories
 const JobOrderRepository = new (use('App/Helpers/JobOrderRepository'))();
-const WhiteSheetRepository = new (use('App/Helpers/WhiteSheetRepository'))();
 const OperatingNotification = new (use('App/Notifications/OperatingNotifications'))();
 const OperatingMetricConfiguration = use('App/Models/OperatingMetricConfiguration');
 //Services

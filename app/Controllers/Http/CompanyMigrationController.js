@@ -4,7 +4,7 @@
 const appInsights = use('applicationinsights');
 const Database = use('Database');
 const { listing } = use('App/Helpers/Migration/MigrationUtils');
-const { companyFieldColumns, companyPcrFields, sourceTypes, getFieldsBytype } = use('App/Helpers/Migration/Constants');
+const { companyFieldColumns, sourceTypes, getFieldsBytype } = use('App/Helpers/Migration/Constants');
 
 // Repositories
 const CompanyMigrationRepository = new (use('App/Helpers/Migration/CompanyMigrationRepository'))();

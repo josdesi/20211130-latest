@@ -968,7 +968,7 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
       if (sendout.job_order_accountable_id !== jobOrderAccountableIdTemp) {
@@ -986,7 +986,7 @@ class SendOutRepository {
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
       if (sendout.candidate_accountable_id !== candidateAccountableIdTemp) {
@@ -2290,13 +2290,13 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
 

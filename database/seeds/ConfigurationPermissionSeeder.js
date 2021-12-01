@@ -1,7 +1,5 @@
 'use strict'
 
-const { errorMonitor } = require('agenda');
-
 /*
 |--------------------------------------------------------------------------
 | PermissionSeeder
@@ -13,8 +11,6 @@ const { errorMonitor } = require('agenda');
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
-const Permission = use('App/Models/Permission');
 const UserHasPermission = use('App/Models/UserHasPermission');
 const User = use('App/Models/User');
 const Database = use('Database');
@@ -30,9 +26,9 @@ class ConfigurationPermissionSeeder {
         'kevin.velazquez@gogpac.com',
         'emilio.leon@gogpac.com'
       ];
-      const users = await User.query().whereIn('email', emailOfUsersThatCanModifyPresetConfigs).fetch();
+      await User.query().whereIn('email', emailOfUsersThatCanModifyPresetConfigs).fetch();
       const permissionsToAdd = users.rows.map(({id}) => {return {user_id: id, permission_id: 5}});
-      const result = await UserHasPermission.createMany(permissionsToAdd, transaction);
+      await UserHasPermission.createMany(permissionsToAdd, transaction);
       (!externalTransaction) && (await transaction.commit());
     } catch(error) {  
       (!externalTransaction) && (await transaction.rollback());

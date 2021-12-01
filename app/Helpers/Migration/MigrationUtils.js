@@ -287,7 +287,7 @@ function getUniquePositions(migrationData, industries_mapping, industryColumn, s
           subspecialty: item[subspecialtyColumn] ? item[subspecialtyColumn].formatToCompare() : null,
         });
         if (!data) {
-          throw `${(item[industryColumn], item[specialtyColumn], item[subspecialtyColumn])} not have an specialty provided`;
+          throw `${item[industryColumn]}, ${item[specialtyColumn]}, ${item[subspecialtyColumn]} not have an specialty provided`;
         }
         return JSON.stringify({
           title: item[functionalTitleColumn] ? item[functionalTitleColumn].formatToCompare() : null,

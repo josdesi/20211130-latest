@@ -22,7 +22,7 @@ const EmailValidation = (module.exports = {
 
           if (!email) continue;
 
-          const result = await Services.validateEmail(email, true);
+          await Services.validateEmail(email, true);
         }
       };
 
