@@ -36,7 +36,7 @@ class RecruiterHasIndustrySeeder {
           .where({ specialty_id: _specialty.id })
           .first();
 
-        let rhi = await RecruiterHasIndustry.create(
+        await RecruiterHasIndustry.create(
           {
             coach_id,
             recruiter_id,
