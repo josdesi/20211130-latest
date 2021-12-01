@@ -139,7 +139,7 @@ class FeeAgreementNotification {
   }
 
   async getSignedByProductionDirectorNotifications(feeAgreement) {
-    const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
+    await UserRepository.getOperationsTeamUsers();
     operationsTeamUsers.rows.map(({id}) => id);
     const {company, recruiter, coach, productionDirector} = await this.getBasicData(feeAgreement);
     const notifications = {
@@ -320,7 +320,6 @@ class FeeAgreementNotification {
   async getValidatedByOperationsAndSentToSignNotifications(feeAgreement) {
     const {coach, company } = await this.getBasicData(feeAgreement);
     const operationsTeamUsers = await UserRepository.getOperationsTeamUsers();
-    const userIds = operationsTeamUsers.rows.map(({id}) => id);
     const notifications = {
       coach: {
         userIds: coach.id,

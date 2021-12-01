@@ -22,7 +22,7 @@ class FeeAgreementScheduledJobsWorker {
         .fetch();
 
       for(const feeAgreement of feeAgreementsToExpire.rows) {
-        const result = await FeeAgreementRepository.expireFeeAgreement(feeAgreement.id);
+        await FeeAgreementRepository.expireFeeAgreement(feeAgreement.id);
         await sleep(0.8);
       } 
     } catch (error) {
