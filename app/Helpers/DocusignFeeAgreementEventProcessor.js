@@ -1,4 +1,3 @@
-const PDFMerger = require('pdf-merger-js');
 const Env = use('Env');
 const DocuSign = use('Services/DocuSign');
 const DocusignAuditEvent = use('App/Models/DocusignAuditEvent');
