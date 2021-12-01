@@ -1120,8 +1120,6 @@ class CompanyRepository {
       company.recruiter_id === userId ||
       company.assignedRecruiters.some((row) => row.recruiter_id === userId || row.coach_id === userId);
 
-    company.company_type_id === companyType.NotSigned;// ATM, recruiter could request with any type whatsoever
-
     if (recruiterIsAssigned) return true;
 
     return false;
