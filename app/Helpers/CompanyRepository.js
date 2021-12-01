@@ -1380,7 +1380,7 @@ class CompanyRepository {
 
       //Create attachment
       let company_has_file_id = null;
-      if (fileId && fileId !== '') {
+      if (fileId !== '') {
         const fileTemp = await Database.table('user_has_temp_files')
           .where('id', fileId)
           .where('user_id', userId)
