@@ -2241,7 +2241,7 @@ class FeeAgreementRepository {
         ...status,
         count: Number(count)
       };
-    }).bind(this);
+    });
     const statusesToCountQuery =  Database
       .from('fee_agreement_statuses')
       .select([
