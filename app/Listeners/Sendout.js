@@ -118,8 +118,9 @@ const Sendout = {
 
       if (!sendoutId) throw new Error(`Sendout Key Missing For : ${JSON.stringify(payloadActivityLog)}`);
       
+      const configKeys = ['sendoutsGlipConfig'];
       const message = await SendoutRepository.getGlipMessage(sendoutId);
-      message && (await InstantMessagingService.sendMessage({ configKey: 'sendoutOnCreationOrConvertionGlips', title: message, text: null }));
+      message && (await InstantMessagingService.sendMessage({ configKeys, title: message, text: null }));
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }

@@ -25,6 +25,7 @@ const {
   userRoles,
   AdditionalRecruiterStatus,
   AdditionalRecruiterTypes,
+  activityLogTypes,
   userPermissions,
   nameTypes,
   joinStringForQueryUsage,
@@ -60,6 +61,9 @@ const CandidateChangeLog = use('App/Models/CandidateChangeLog');
 const CandidateAdditionalRecruiter = use('App/Models/CandidateAdditionalRecruiter');
 const CompanyHasCandidateEmployee = use('App/Models/CompanyHasCandidateEmployee');
 const Company = use('App/Models/Company');
+const CandidateBulkActivityReference = use('App/Models/CandidateBulkActivityReference');
+const Team = use('App/Models/Team');
+
 const userBuilder = (builder) => {
   builder.setHidden(['personal_information_id', 'user_id', ...auditFields]);
   builder.with('personalInformation', (builder) => {
@@ -258,6 +262,7 @@ class CandidateRepository {
       const suggestedCompaniesIds = [];
       const lowSimilarity = '0.20';
       const mediumSimilarity = '0.25';
+      const highSimilarity = '0.30';
 
       const candidate = await Database.table('contacts_directory')
         .where({
@@ -2369,6 +2374,7 @@ class CandidateRepository {
     if (!candidate) {
       return null;
     }
+    const blueSheet = await BlueSheetRepository.getByCandidate(candidateActivityLog.candidate_id);
     const additionalRecruiter =  await this.existAdditionalRecruiter({
       candidateId: candidate_id,
       status: AdditionalRecruiterStatus.Approved,
@@ -3589,6 +3595,22 @@ class CandidateRepository {
     await Database.table('candidates')
       .where('id',candidateId)
       .update({last_sent_reference_date : date});
+  }
+
+  /**
+   *
+   * @param {Integer} candidateId
+   * @returns basic info to sendout
+   */
+  async getCandidateForSendout(candidateId) {
+    const result = await Database.table('candidates as ca')
+    .select(['ca.id', 'pi.full_name', 'i.email as industry_email'])
+    .innerJoin('personal_informations as pi', 'ca.personal_information_id', 'pi.id')
+    .innerJoin('specialties as s2', 'ca.specialty_id', 's2.id')
+    .innerJoin('industries as i', 's2.industry_id', 'i.id')
+    .where('ca.id', candidateId)
+    .first();
+    return result;
   }
 }
 

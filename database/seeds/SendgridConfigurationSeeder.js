@@ -11,6 +11,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
 const SendgridConfiguration = use('App/Models/SendgridConfiguration');
 
 class SendgridConfigurationSeeder {

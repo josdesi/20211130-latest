@@ -29,6 +29,7 @@ const {
   OperationType,
   EntityTypes,
   UnsubscribeReasons,
+  joinStringForQueryUsage,
   nameTypes,
 } = use('App/Helpers/Globals');
 const Event = use('Event');

@@ -1010,7 +1010,7 @@ class UserRepository {
           data: teamData
         };
       }
-      if(!(!find(userData.roles, { id: userRoles.Coach })) && !await this.hasRole(userId, userRoles.Coach)){
+      if(!(!!find(userData.roles, { id: userRoles.Coach })) && !await this.hasRole(userId, userRoles.Coach)){
         throw new Error("The user provided is not a coach.");
       }
       const { data: { apiEmail } = {} } = await ModulePresetsConfigRepository.getById('system');

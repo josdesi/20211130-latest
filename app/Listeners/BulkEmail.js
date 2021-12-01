@@ -18,7 +18,7 @@ const BulkEmail = (module.exports = {
    */
   schedule: async ({ bulkEmailId, date, userId }) => {
     try {
-      await ActivityAgenda.create(JobNames.Emails.ScheduledBulkEmail, {
+      const response = await ActivityAgenda.create(JobNames.Emails.ScheduledBulkEmail, {
         bulkEmailId,
         date,
         userId,
@@ -42,7 +42,7 @@ const BulkEmail = (module.exports = {
    */
   delete: async ({ bulkEmailId, date, userId }) => {
     try {
-      await ActivityAgenda.cancel({
+      const response = await ActivityAgenda.cancel({
         name: JobNames.Emails.ScheduledBulkEmail,
         'data.bulkEmailId': bulkEmailId,
         'data.userId': userId,
@@ -64,9 +64,9 @@ const BulkEmail = (module.exports = {
    */
   update: async ({ bulkEmailId, date, userId }) => {
     try {
-      await BulkEmail.delete({ bulkEmailId, date, userId });
+      const deleteResponse = await BulkEmail.delete({ bulkEmailId, date, userId });
 
-      await BulkEmail.schedule({ bulkEmailId, date, userId });
+      const updateResponse = await BulkEmail.schedule({ bulkEmailId, date, userId });
 
       //Kevin alert
       //If something goes wrong when updating the scheduling, perhaps a alert could be send? but how do I know agenda failed? the response doesn't seem to return a code

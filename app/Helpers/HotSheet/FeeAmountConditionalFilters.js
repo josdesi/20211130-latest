@@ -4,9 +4,7 @@ class FeeAmountConditionalFilters {
   isRecruiterCoachOrRegionalFilter(filters) {
     return (
       filters.userFilter == userFilters.Mine ||
-      filters.userFilter == userFilters.MyInventory ||
       filters.userFilter == userFilters.MyTeam ||
-      filters.userFilter == userFilters.MyRegion ||
       this.isCoach(filters) ||
       this.isRegionalDirector(filters) ||
       this.isRecruiter(filters)

@@ -11,6 +11,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
 const WorkTypeOption = use('App/Models/WorkTypeOption');
 const Database = use('Database');
 class WorkTypeOptionSeeder {

@@ -1,5 +1,7 @@
 'use strict';
 
+const Database = use('Database');
+
 /*
 |--------------------------------------------------------------------------
 | HolidaySeeder
@@ -11,6 +13,8 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory');
+
 const Holiday = use('App/Models/Holiday');
 
 class HolidaySeeder {

@@ -25,6 +25,7 @@ const {
   AdditionalRecruiterStatus,
   AdditionalRecruiterTypes,
   userRoles,
+  activityLogTypes,
   userPermissions
 } = use('App/Helpers/Globals');
 const { moveFile } = use('App/Helpers/FileHelper');
@@ -56,8 +57,10 @@ const JobOrderRecruiterAssignment = use('App/Models/JobOrderRecruiterAssignment'
 const OperatingMetricConfiguration = use('App/Models/OperatingMetricConfiguration');
 const JobOrderOperatingMetric = use('App/Models/JobOrderOperatingMetric');
 const JobOrderTypeLog = use('App/Models/JobOrderTypeLog');
+const JobOrderBulkActivityReference = use('App/Models/JobOrderBulkActivityReference');
 const JobOrderChangeLog = use('App/Models/JobOrderChangeLog');
 const JobOrderAdditionalRecruiter = use('App/Models/JobOrderAdditionalRecruiter');
+const Team = use('App/Models/Team');
 
 const userBuilder = (builder) => {
   builder.setHidden(['personal_information_id', 'user_id', 'email_signature', ...auditFields]);
@@ -1697,7 +1700,7 @@ class JobOrderRepository {
     if (!jobOrder) {
       return null;
     }
-    await WhiteSheetRepository.getByJobOrder(jobOrderActivityLog.job_order_id);
+    const whiteSheet = await WhiteSheetRepository.getByJobOrder(jobOrderActivityLog.job_order_id);
     const additionalRecruiter =  await this.existAdditionalRecruiter({
       jobOrderId: job_order_id,
       status: AdditionalRecruiterStatus.Approved,
@@ -2845,6 +2848,21 @@ class JobOrderRepository {
     const whiteSheet = await WhiteSheetRepository.getByJobOrder(jobOrderId);
     const { job_order_type_id = null } = whiteSheet;
     return job_order_type_id == JobOrderTypeSchemes.SearchAssignment && status_id == JobOrderStatusSchemes.Ongoing
+  }
+
+  /**
+   *
+   * @param {Integer} jobOrderId
+   * @returns basic info to sendout
+   */
+  async getJobOrderForSendout(jobOrderId) {
+    const result = await Database.table('job_orders as jo')
+    .select(['jo.id', 'jo.title', 'i.email as industry_email'])
+    .innerJoin('specialties as s2', 'jo.specialty_id', 's2.id')
+    .innerJoin('industries as i', 's2.industry_id', 'i.id')
+    .where('jo.id', jobOrderId)
+    .first();
+    return result;
   }
 }
 

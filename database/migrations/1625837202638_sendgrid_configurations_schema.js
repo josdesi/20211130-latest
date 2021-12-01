@@ -6,11 +6,13 @@ const Database = use('Database')
 class SendgridConfigurationsSchema extends Schema {
   up () {
     this.schedule(async (transaction) => {
-      
+      try {
         await Database.table('sendgrid_configurations')
           .insert({type: 'feeeSendoutsCopyEmail', sender: 'notifications@gogpac.com', template_id: 'd-bd2bb78ed679486dbaa7a4c9dffdb152'})
           .transacting(transaction);
-      
+      } catch(error) {
+        throw error;
+      }
     });
   }
 

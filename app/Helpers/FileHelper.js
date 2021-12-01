@@ -9,6 +9,8 @@ const urlP = require('url');
 const appInsights = require('applicationinsights');
 const defaultValidExtNames = ['jpg', 'jpeg','png', 'pdf', 'doc','docx','ppt','pptx', 'xlsx', 'csv', 'xls'] ;
 const defaultSizeLimit = '5mb';
+const Mime = require('mime-types');
+
 /**
  * Upload Video to Store repo
  * @param {String} path Where image should be stored
@@ -18,13 +20,15 @@ const defaultSizeLimit = '5mb';
  */
 const uploadFile = async (path, source) => {
 
-  
+  try {
     if (source instanceof Stream) {
       await Drive.disk('azure').putStream(path, source);
     } else {
       await Drive.disk('azure').put(path, source);
     }
-  
+  } catch (error) {
+    throw error;
+  }
 
   if (await Drive.disk('azure').exists(path)) {
     const url = await Drive.disk('azure').getUrl(path);
@@ -43,9 +47,11 @@ const uploadFile = async (path, source) => {
  */
 const moveFile = async (fileName, path) => {
   const decodedPath = decodeURIComponent(path);
-
+  try {
     await Drive.disk('azure').move('tmp/'+ decodeURIComponent(fileName), decodedPath);
-
+  } catch (error) {
+    throw error;
+  }
 
   if (await Drive.disk('azure').exists(decodedPath)) {
     const url = await Drive.disk('azure').getUrl(decodedPath);
@@ -144,11 +150,13 @@ const splitBlobUrlByContainer = (url, defaultContainer = 'files') => {
  */
 const extractRelativePathFromBlobUrl = (url, defaultContainer = 'files') => {
   const urlParts = splitBlobUrlByContainer(url, defaultContainer);
+  if(!urlParts) throw new Error('Invalid Blob URL');
   return urlParts[1];
 }
 
 const encodeFilenameInBlobUrl  = (url, defaultContainer = 'files') => {
   const urlParts = splitBlobUrlByContainer(url, defaultContainer);
+  if(!urlParts) throw new Error('Invalid Blob URL');
   const [baseUrl, path] = urlParts;
   const [folderName, fileName] = path.split('/');
   return `${baseUrl}/${defaultContainer}/${folderName}/${encodeURIComponent(fileName)}`;
@@ -182,6 +190,19 @@ const getMultipartConfig = ({ sizeLimit, extensions } = {}) => {
   }
 }
 
+
+const streamToString = async (stream) => {
+  let string = '';
+  for await (const chunk of stream) {
+    string += chunk;
+  }
+  return string;
+};
+
+const getMIMEType = (filename) => {
+  return Mime.lookup(filename) || 'application/octet-stream';
+};
+
 module.exports = {
   uploadFile,
   moveFile,
@@ -193,5 +214,7 @@ module.exports = {
   encodeFilenameInBlobUrl,
   assertFileExists,
   readFilePropertiesFromPath,
-  getFileAsBase64
+  streamToString,
+  getMIMEType,
+  getFileAsBase64,
 };

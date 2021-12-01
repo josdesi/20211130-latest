@@ -79,6 +79,8 @@ async function sendValidationEmails({payloads}) {
 }
 
 async function sendInstantMessage({ feeAgreement }) {
+  const configKeys = ['coachesGlipConfig', 'gpacAllGlipConfig'];
+
   const totalForTrackingDay = await FeeAgreementRepository.getDailySignedTotalForTracking();
 
   if (!totalForTrackingDay) return;
@@ -87,7 +89,7 @@ async function sendInstantMessage({ feeAgreement }) {
   if (!agreementAsJson.creator || !agreementAsJson.company || !agreementAsJson.company.specialty) return;
 
   const title = `${totalForTrackingDay} signed ${agreementAsJson.creator.personalInformation.full_name} -${agreementAsJson.company.specialty.industry.title}`;
-  return await InstantMessagingService.sendMessage({ configKey: 'feeOnSignedGlips', title, text: null });
+  return await InstantMessagingService.sendMessage({ configKeys, title, text: null });
 }
 
 const CompanyFeeAgreement = {
@@ -140,6 +142,10 @@ const CompanyFeeAgreement = {
 
   notifyDeclinedByCoach: getGenericNotifier({
     buildPayloads: FeeAgreementNotification.getDeclinedByCoachNotifications.bind(FeeAgreementNotification),
+  }),
+
+  notifySentToCoachValidation: getGenericNotifier({
+    buildPayloads: FeeAgreementNotification.getSentToCoachValidationNotifications.bind(FeeAgreementNotification),
   }),
 
   notifySentToCoachValidation:  getGenericNotifier({

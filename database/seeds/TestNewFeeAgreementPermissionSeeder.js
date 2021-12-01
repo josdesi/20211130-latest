@@ -11,6 +11,8 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
+const Permission = use('App/Models/Permission');
 const { userPermissions } = use('App/Helpers/Globals');
 const User = use('App/Models/User');
 const UserHasRole = use('App/Models/UserHasRole');

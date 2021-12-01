@@ -2,7 +2,8 @@
 const ZipCode = use('App/Models/ZipCode');
 const appInsights = require('applicationinsights');
 const Database = use('Database');
-const {multipleFilterParser} = (use('App/Helpers/QueryFilteringUtil'));
+const { countries } = use('App/Helpers/Globals');
+const {multipleFilterParser, defaultWhereResolver} = (use('App/Helpers/QueryFilteringUtil'));
 
 class LocationRepository {
 

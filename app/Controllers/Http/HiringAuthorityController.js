@@ -1,4 +1,5 @@
 'use strict';
+const Logger = use('Logger');
 const Event = use('Event');
 const EventType = use('App/Helpers/Events');
 const appInsights = require("applicationinsights");
@@ -7,6 +8,7 @@ const HiringAuthorityHasFile = use('App/Models/HiringAuthorityHasFile');
 const { fileType } = use('App/Helpers/FileType');
 const HiringAuthorityRepository = new (use('App/Helpers/HiringAuthorityRepository'))();
 const { uploadFile, getMultipartConfig } = use('App/Helpers/FileHelper');
+const {HiringAuthorityNote} = use('App/Models/HiringAuthorityNote');
 const path = require('path');
 const JobOrderHasHiringAuthority = use('App/Models/JobOrderHasHiringAuthority');
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */

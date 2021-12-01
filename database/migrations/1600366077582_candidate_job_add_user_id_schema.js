@@ -31,7 +31,7 @@ class CandidateJobAddUserIdSchema extends Schema {
               recruiterId = jo ? jo.recruiter_id : null;
               break;
           }
-          await _collection.updateOne(
+          const updated = await _collection.updateOne(
             { _id :  value._id },
             { $set: { "data.userId" : recruiterId } },
             opts

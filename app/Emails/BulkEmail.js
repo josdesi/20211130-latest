@@ -148,7 +148,7 @@ class BulkEmail {
         const { message, code, response } = error;
 
         // Extract response msg
-        const { body } = response;
+        const { headers, body } = response;
 
         appInsights.defaultClient.trackException({ exception: body });
 
@@ -483,7 +483,7 @@ class BulkEmail {
         );
       };
 
-      const { itemIds, itemEmails } = this.getRecipientsIdsAndEmails(recipients);
+      const { itemIds, itemEmails } = await this.getRecipientsIdsAndEmails(recipients);
 
       const result = await BulkEmailOptOutRepository.getOptOutEmailsByIdsAndEmails(itemIds, itemEmails);
       if (result.code !== 200) throw result;
@@ -676,7 +676,7 @@ class BulkEmail {
    */
   async getInvalidEmails({ recipients }, blockedByResendItems) {
     try {
-      const { itemEmails } = this.getRecipientsIdsAndEmails(recipients);
+      const { itemEmails } = await this.getRecipientsIdsAndEmails(recipients);
 
       //These are the invalid emails, they are taken from the sendgrid validations
       const result = await Services.getSendgridValidationEmails('invalid', itemEmails);

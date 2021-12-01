@@ -11,7 +11,9 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory');
 const SearchProjectType = use('App/Models/SearchProjectType');
+const Database = use('Database');
 const { SearchProjectTypes } = use('App/Helpers/Globals');
 
 class SearchProjectTypeSeeder {

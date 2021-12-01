@@ -9,6 +9,7 @@ const CompanyFeeAgreement = use('App/Models/CompanyFeeAgreement');
 const UserRepository = new (use('App/Helpers/UserRepository'))();
 //Utils
 const { getFileAsBase64 } = use('App/Helpers/FileHelper');
+const Drive = use('Drive');
 const FeeAgreementContractManager = use('App/Helpers/FeeAgreementContractManager');
 const GenericSendgridTemplateEmail = new (use('App/Emails/GenericSendgridTemplateEmail'))();
 const appInsights = require('applicationinsights');

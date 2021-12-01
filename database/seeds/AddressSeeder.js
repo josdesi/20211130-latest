@@ -31,11 +31,12 @@ class AddressSeeder {
     ];
     for(const add of adresses){
       let city = null;
+      let country = null;
       let state = null;
       let zipCode = null;
       let coordinates = null;
       if(add.address !== 'Remote'){
-        await Country.findBy('slug',add.country);
+        country = await Country.findBy('slug',add.country);
         state = await State.findBy('slug',add.state);
         city = await City.query().where('state_id',state.id).whereRaw('LOWER(title)=?',[add.city]).first();
         zipCode = await ZipCode.query().where('city_id',city.id).where('zip_ch',add.zip).first();

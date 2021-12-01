@@ -2,6 +2,7 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
+const Database = use('Database');
 
 class SendoutSchema extends Schema {
   up () {

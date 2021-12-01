@@ -2088,7 +2088,7 @@ class PlacementRepository {
 
       const title = `${initials} ${feeAmount} ${fee_agreement_payment_scheme_id == FeeAgreementPaymentSchemes.Conversion ? 'New Conversion' : ''} ${industry}`;
 
-      await InstantMessagingService.sendMessage({ configKey: 'placementOnDealGlips', title, text: null });
+      await InstantMessagingService.sendMessage({ configKeys: ['dealsGlipConfig'], title, text: null });
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }

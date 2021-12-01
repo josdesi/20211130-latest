@@ -13,6 +13,7 @@ const { userRoles } = use('App/Helpers/Globals');
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory');
 const Database = use('Database');
 
 // Models

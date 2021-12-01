@@ -30,7 +30,7 @@ class FeeAgreementEventTypeSeeder {
         await FeeAgreementEventType.create(feeAgreementEventType, transaction);
       }
       isAtomic && (await transaction.commit());
-    } catch(error) {
+    } catch(error) {0
       isAtomic && (await transaction.rollback());
     }
   }

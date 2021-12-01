@@ -11,6 +11,10 @@ const baseUrl = `${url}`;
 const path = `sendouts/summary`;
 
 const useIndividualMetrics = parseBoolean(Env.get('FEAT_INDIVIDUAL_METRICS'));
+function testAsserts(values, func) {
+  for (let value of values) 
+    useIndividualMetrics && func.apply(Object, [value]);
+}
 const feeAmountConditionalStub = new FeeAmountConditionalStub();
 const users = feeAmountConditionalStub.getUsers();
 const filterStubs = feeAmountConditionalStub.getFilterMetricsCountStub();
@@ -27,11 +31,6 @@ const typeId = '1';
 trait('Test/ApiClient');
 trait('Auth/Client');
 trait('Test/Traits/User');
-
-const testAsserts = (values, func) => {
-  for (let value of values) 
-    useIndividualMetrics && func.apply(Object, [value]);
-}
 
 testAsserts(filterStubs, ([stub, desc, expectedResult]) => {
   test(`Should return the correct metrics count by filter ${desc}`, async ({ client, user }) => {

@@ -176,7 +176,7 @@ class SendgridWebhookController {
       sendgridEvents.push(this.buildEventBody(sendgridRawEvent));
     }
 
-    await SendgridEventsRepository.storeSendgridEvents(sendgridEvents);
+    const storedSendgridEvents = await SendgridEventsRepository.storeSendgridEvents(sendgridEvents);
   }
 
   buildEventBody(rawEvent) {

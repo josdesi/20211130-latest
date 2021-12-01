@@ -1,5 +1,6 @@
 'use strict';
 
+const Database = use('Database');
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory');
 const { SendoutStatusSchemes, SendoutTypesSchemes } = use('App/Helpers/Globals');
 
 const SendoutStatus = use('App/Models/SendoutStatus');

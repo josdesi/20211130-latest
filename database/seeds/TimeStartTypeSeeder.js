@@ -11,6 +11,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
 const TimeStartType = use('App/Models/TimeStartType')
 
 class TimeStartTypeSeeder {

@@ -11,6 +11,8 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory');
+const Database = use('Database');
 const RecruiterHasIndustry = use('App/Models/RecruiterHasIndustry');
 const BulkEmailTemplateRepository = new (use('App/Helpers/BulkEmailTemplateRepository'))();
 

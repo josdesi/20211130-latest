@@ -150,6 +150,7 @@ class CompanyRepository {
           email,
           website,
           link_profile,
+          created_by: user_id,
           fee_agreement_url,
           file_name,
           created_by: user_id,
@@ -1119,6 +1120,8 @@ class CompanyRepository {
       company.recruiter_id === userId ||
       company.assignedRecruiters.some((row) => row.recruiter_id === userId || row.coach_id === userId);
 
+    const companyIsNotSigned = company.company_type_id === companyType.NotSigned;// ATM, recruiter could request with any type whatsoever
+
     if (recruiterIsAssigned) return true;
 
     return false;
@@ -1377,7 +1380,7 @@ class CompanyRepository {
 
       //Create attachment
       let company_has_file_id = null;
-      if (fileId !== '') {
+      if (fileId && fileId !== '') {
         const fileTemp = await Database.table('user_has_temp_files')
           .where('id', fileId)
           .where('user_id', userId)

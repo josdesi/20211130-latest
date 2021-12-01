@@ -17,14 +17,15 @@ const { positions } = require('../data/PositionsData');
 
 class PositionSeeder {
   static async run() {
-    for (const iterator of positions) {
-      const { industry, specialty, title } = iterator;
+    let _subspecialty
+    for (const iterator in positions) {
+      const { industry, specialty, subspecialty, title } = positions[iterator];
       const { id: industry_id } = await Industry.findBy({ title: industry });
       const { id: specialty_id } = await Specialty.query().where({ title: specialty }).where({ industry_id }).first();
       
 
 
-      await Position.findOrCreate(
+      const position = await Position.findOrCreate(
         {
           industry_id,
           specialty_id,

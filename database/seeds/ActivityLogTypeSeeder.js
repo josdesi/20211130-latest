@@ -11,6 +11,8 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
+const Database = use('Database')
 const ActivityLogType = use('App/Models/ActivityLogType');
 
 class ActivityLogTypeSeeder {
@@ -39,7 +41,7 @@ class ActivityLogTypeSeeder {
       { id: 21, title: 'Sendover' },
     ];
     for(const activityType of data){
-      await ActivityLogType.findOrCreate(activityType);
+      const exist = await ActivityLogType.findOrCreate(activityType);
     } 
   }
 }

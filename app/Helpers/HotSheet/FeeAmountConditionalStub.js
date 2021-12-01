@@ -237,8 +237,8 @@ class FeeAmountConditionalStub {
       [{ userFilter: userFilters.All }, 'All Sendouts', false],
       [{ userFilter: userFilters.MyCollaborations }, 'MyCollaborations', false],
       [{ userFilter: userFilters.FreeGame }, 'FreeGame', false],
-      [{ userFilter: userFilters.MyInventory }, 'MyInventory', true],
-      [{ userFilter: userFilters.MyRegion }, 'MyRegion', true],
+      [{ userFilter: userFilters.MyInventory }, 'MyInventory', false],
+      [{ userFilter: userFilters.MyRegion }, 'MyRegion', false],
     ];
   }
 

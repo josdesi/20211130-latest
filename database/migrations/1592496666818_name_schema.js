@@ -2,6 +2,7 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
+const { nameStatus } = use('App/Helpers/Globals');
 
 class NameSchema extends Schema {
   up () {

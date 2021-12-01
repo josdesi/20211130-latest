@@ -11,6 +11,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
 const Role = use('App/Models/Role');
 
 class RoleSeeder {
@@ -27,7 +28,7 @@ class RoleSeeder {
 
     ]
     for(const role of roles){
-      await Role.findOrCreate(role);
+      const exist = await Role.findOrCreate(role);
     } 
   }
 }

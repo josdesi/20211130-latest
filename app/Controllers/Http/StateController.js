@@ -1,7 +1,9 @@
 'use strict';
 
 const appInsights = require("applicationinsights");
+const { countries } = use('App/Helpers/Globals');
 const Database = use('Database');
+const LocationRepository = new (use('App/Helpers/LocationRepository'))();
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */

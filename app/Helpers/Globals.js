@@ -392,6 +392,7 @@ const FeeAgreementEventType = {
   SignatureRequestOpenedByHiringAuthority: 39,
   SignatureRequestOpenedByProductionDirector: 40,
   SignatureRequestViewedByProductionDirector: 28,
+  ValidationRequestCanceled: 32,
   SignatureReminderSent: 21,
   SignerEmailUpdated: 34,
   ValidatedByCoachAndSentToSign: 35,
@@ -985,25 +986,6 @@ const JobOrderSourceURLTypes = {
   }
 }
 
-const defaultEmailSendouts = {
-  Operations: 'ops@gogpac.com',
-  Sendouts: 'sendouts@gogpac.com',
-  TestEmails: [
-    'mario.moreno@gogpac.com',
-    'jorge.felix@gogpac.com',
-    'isidro.vasquez@gogpac.com',
-    'roberto.deanda@gogpac.com',
-    'kevin.velazquez@gogpac.com',
-    'emilio.leon@gogpac.com',
-    'francisco.regalado@gogpac.com',
-    'diana.alonso@gogpac.com',
-    'pablo.vargas@gogpac.com',
-    'cristopher.tovilla@gogpac.com',
-    'ezequiel.saldana@gogpac.com',
-    'jacqueline.delariva@gogpac.com'
-  ]
-};
-
 const WebSocketNamespaces = {
   BulkEmail: '/bulk-email',
   Migration: '/migrations',
@@ -1104,6 +1086,7 @@ module.exports = {
   MicrosoftGraphSubscriptionTypes,
   AdditionalRecruiterTypes,
   StandardFeeAgreementDeclinableField,
+  userPermissions,
   AdditionalRecruiterStatus,
   FeeAgreementTab,
   FeeAgreementPaymentSchemes,
@@ -1128,7 +1111,6 @@ module.exports = {
   SendoutReminderType,
   SendoutEventType,
   FeeAgreementSignatureProcessType,
-  defaultEmailSendouts,
   FeeAgreementFileEntitySources,
   CandidateSourceURLTypes,
   JobOrderSourceURLTypes,

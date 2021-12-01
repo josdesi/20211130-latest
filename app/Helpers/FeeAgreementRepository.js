@@ -105,6 +105,7 @@ class FeeAgreementRepository {
       specialtyIds: this.inQueryResolver,
       subspecialtyIds: this.inQueryResolver,
       guaranteeDaysIn: this.inQueryResolver,
+      regionalDirectorIds: this.inQueryResolver,
       signatureProcessTypeId: this.inQueryResolver
     };
     this._orderColumnsMap = {
@@ -958,8 +959,8 @@ class FeeAgreementRepository {
         event_type_id: currentEventId,
       };
       if (fee_agreement_status_id === FeeAgreementStatus.PendingHiringAuthoritySignature) {
-        await Company.find(feeAgreement.company_id);
-        await HiringAuthority.find(feeAgreement.hiring_authority_id);
+        const company = await Company.find(feeAgreement.company_id);
+        const hiringAuthority = await HiringAuthority.find(feeAgreement.hiring_authority_id);
         const { contractSentDetails} = await this.sendToSign(feeAgreement, userId, transaction);
         eventData.event_details = {
           fee_agreement: this.unWrapValidableFields(feeAgreement),
@@ -1410,7 +1411,7 @@ class FeeAgreementRepository {
   async createSignatureRequestDraftWithTemplate({feeAgreement, company, hiringAuthority, productionDirector, userId, customFieldsThatApply}) {
     const config = await ModulePresetsConfigRepository.getById('feeAgreement');
     const { defaultPayload, defaultCCRole, unClaimedDraftPayload } = config.data.signatureRequest;
-    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {
@@ -1859,7 +1860,7 @@ class FeeAgreementRepository {
   async handleSignatureRequestEmailBounce(event, feeAgreement, externalTransaction)  {
     const transaction = externalTransaction ? externalTransaction : await Database.beginTransaction();
     try {
-      await this.genericHelloSignEventHandler(event, feeAgreement, transaction);
+      const registeredEvent = await this.genericHelloSignEventHandler(event, feeAgreement, transaction);
       (!externalTransaction && transaction) && (await transaction.commit());
     } catch(error) {
       (!externalTransaction && transaction) && (await transaction.rollback());
@@ -2021,7 +2022,7 @@ class FeeAgreementRepository {
       throw new NotFoundException(Antl.formatMessage('feeAgreement.error.helloSignTemplateNotFound'));
     }
     const customFieldsThatApply = templateDetails.template.custom_fields.map(({name}) => name);
-    const customFields = this.formatCustomFields({hiringAuthority, feeAgreement, productionDirector, company});
+    const customFields = this.formatCustomFields({feeAgreement, hiringAuthority, feeAgreement, productionDirector, company});
     const currentCustomFields = Object.keys(customFields);
     currentCustomFields.forEach(field => {
       if (!customFieldsThatApply.includes(field)) {
@@ -2240,7 +2241,7 @@ class FeeAgreementRepository {
         ...status,
         count: Number(count)
       };
-    });
+    }).bind(this);
     const statusesToCountQuery =  Database
       .from('fee_agreement_statuses')
       .select([
@@ -2584,7 +2585,16 @@ class FeeAgreementRepository {
     this.feeAgreementStatusCalculator.getCurrentResponsible(input_current_status_id, feeAgreement);
   }
 
+  async getFullName(userId) {
+    const details = await UserRepository.getDetails(userId);
+    return details.full_name;
+  }
 
+  operatorFilterResolverFactory(operator) {
+    return (query, column, value) => {
+      query.where(column, operator, value);
+    };
+  }
 
   applyKeywordFilters(query, keywordColumns, value) {
     query.where(function() {
@@ -3067,9 +3077,10 @@ class FeeAgreementRepository {
 
   isSentDateBeforeSignDate({inputSentDate, inputSignedDate}) {
     const validatedDate = inputSentDate instanceof Date ? inputSentDate : new Date(inputSentDate);
+    if (Number.isNaN(validatedDate)) throw new Error('validated_date is not a valid date');
 
     const signedDate = inputSignedDate instanceof Date ? inputSignedDate : new Date(inputSignedDate);
-    
+    if (Number.isNaN(signedDate)) throw new Error('signed_date is not a valid date');
 
     return signedDate.getTime() >= validatedDate.getTime();
   }

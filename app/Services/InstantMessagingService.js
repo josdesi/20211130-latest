@@ -13,7 +13,7 @@ class InstantMessagingService {
     this.moduleConfigRepository = new ModulePresetsConfigRepository();
   }
 
-  async sendMessage({ configKey, title, text, customParams = {} }) {
+  async sendMessage({ configKeys, title, text, customParams = {} }) {
     try {
       const senderConfigKey = 'userGlipForWebHookMsg';
       const senderConfig = await this.moduleConfigRepository.getById(senderConfigKey);
@@ -26,11 +26,8 @@ class InstantMessagingService {
         iconUri: iconUrl,
         ...customParams
       };
-      const messageConfig = await this.moduleConfigRepository.getById(configKey);
-      if (!messageConfig) throw Antl.formatMessage('messages.configuration.noKey', { key: configKey });
-      const groups = messageConfig.data || [];
 
-      const postPromises = groups.map(group => this.postToGlip(group.groupId, payload));
+      const postPromises = configKeys.map(configKey => this.postToGlip(configKey, payload));
       await Promise.all(postPromises);
       
     } catch (error) {
@@ -38,7 +35,11 @@ class InstantMessagingService {
     }
   }
 
-  async postToGlip(groupId, payload){
+  async postToGlip(configKey, payload){
+    const messageConfig = await this.moduleConfigRepository.getById(configKey);
+    if (!messageConfig) throw Antl.formatMessage('messages.configuration.noKey', { key: configKey });
+    const { groupId } = messageConfig.data;
+
     const endpoint = `${this.baseUrl}/${groupId}`;
     const response = await axios.post(endpoint, payload);
     if (response.status !== 200) throw `Error ${response.status} when invoking ${endpoint}`;

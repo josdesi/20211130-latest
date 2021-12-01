@@ -1,6 +1,7 @@
 'use strict'
 
 const { ServiceProvider } = require('@adonisjs/fold')
+const _ = require('lodash')
 
 
 class UniqueCaseInsensitivePersonalEmailRule extends ServiceProvider {

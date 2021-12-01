@@ -1,5 +1,7 @@
 'use strict'
 
+const { errorMonitor } = require('agenda');
+
 /*
 |--------------------------------------------------------------------------
 | PermissionSeeder

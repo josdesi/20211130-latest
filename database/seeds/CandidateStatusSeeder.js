@@ -13,6 +13,7 @@ const { CandidateStatusSchemes, StatusColorsSchemes } = use('App/Helpers/Globals
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
+const Factory = use('Factory')
 
 // Models
 const CandidateStatus = use('App/Models/CandidateStatus');

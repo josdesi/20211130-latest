@@ -95,6 +95,7 @@ class StoreCandidate {
       'blueSheet.achievement_one.required':'You must provide a achievement_one',
       'blueSheet.experience.required':'You must provide a experience',
       'blueSheet.time_looking.required':'You must provide a time_looking',
+      'blueSheet.achievement_one.required': 'You must provide an achievement here',
       'blueSheet.achievement_two.required': 'You must provide an achievement here',
       'blueSheet.achievement_three.required': 'You must provide an achievement here',
 

@@ -1,12 +1,13 @@
 'use strict'
 
 const { ServiceProvider } = require('@adonisjs/fold')
+const _ = require('lodash')
 
 
 class LowerCase extends ServiceProvider {
 
   lowerCase(value) {
-    if (typeof value !== 'string') return value;
+    if (!(typeof value === 'string')) return value;
     return value.toLocaleLowerCase();
   }
   /**

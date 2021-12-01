@@ -1,6 +1,7 @@
 'use strict';
 
 //Repositories
+const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 const UserRepository = new (use('App/Helpers/UserRepository'))();
 
 //Utils

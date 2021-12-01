@@ -2,6 +2,7 @@
 
 class UpdateCompany {
   get rules() {
+    const companyId = this.ctx.params.id
     return {
       // validation rules company
       name: 'required|string|max:512',

@@ -24,8 +24,8 @@ class RecruiterHasIndustrySeeder {
   static async run() {
     const trx = await Database.beginTransaction();
     try {
-      for (const iterator of recruiterIndustries) {
-        const { coach, recruiter, industry, state, specialty, subspecialty } = iterator;
+      for (const iterator in recruiterIndustries) {
+        const { coach, recruiter, industry, state, specialty, subspecialty } = recruiterIndustries[iterator];
         const { id: coach_id } = await User.findBy({ email: coach });
         const { id: recruiter_id } = await User.findBy({ email: recruiter });
         const { id: state_id } = await State.findBy({ slug: state });
@@ -36,7 +36,7 @@ class RecruiterHasIndustrySeeder {
           .where({ specialty_id: _specialty.id })
           .first();
 
-        await RecruiterHasIndustry.create(
+        let rhi = await RecruiterHasIndustry.create(
           {
             coach_id,
             recruiter_id,

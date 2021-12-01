@@ -22,14 +22,15 @@ class DocusignService {
   }
 
   async sendEnvelope(payload) {
-    return await this._retryWhenUnAuthenticated(async () => {
+    return await this._retryWhenUnAuthenticated((async () => {
       const headers = {
         Authorization: `Bearer ${this.accessToken}`
       };
       const url = `${this.apiBaseUrl}/v2.1/accounts/${this.accountId}/envelopes`;
       const response = await axios.post(url, payload, {headers});
+
       return response.data;
-    })
+    }).bind(this));
   }
 
   async listAuditEvents(envelopeId) {
@@ -41,7 +42,7 @@ class DocusignService {
       const response = await axios.get(url, {headers});
 
       return response.data.auditEvents;
-    }));
+    }).bind(this));
   }
 
   async getCombinedDocuments(envelopeId) {
@@ -53,7 +54,7 @@ class DocusignService {
       const response = await axios.get(url, {headers, responseType: 'stream'});
 
       return response.data;
-    }));
+    }).bind(this));
   }
 
   async getCombinedDocumentsInBase64(envelopeId) {
@@ -79,7 +80,7 @@ class DocusignService {
 
       return await _streamToBase64(stream);
       
-    }));
+    }).bind(this));
   }
 
 
@@ -93,7 +94,7 @@ class DocusignService {
       const response = await axios.get(url, {headers, params: {include}});
 
       return response.data;
-    }));
+    }).bind(this));
   }
 
   async resendEnvelope(envelopeId) {
@@ -105,7 +106,7 @@ class DocusignService {
       const response = await axios.put(url, {}, {headers});
 
       return response.data;
-    }));
+    }).bind(this));
   }
 
   async voidEnvelope(envelopeId, voidedReason = 'Not specified') {
@@ -117,7 +118,7 @@ class DocusignService {
       const response = await axios.put(url, {status: 'voided', voidedReason}, {headers});
 
       return response.data;
-    }));
+    }).bind(this));
   }
 
   async updateRecipients(envelopeId, recipients) {
@@ -129,7 +130,7 @@ class DocusignService {
       const response = await axios.put(url, recipients, {headers});
 
       return response.data;
-    }));
+    }).bind(this));
   }
 
   formatAuditEvent(auditEvent) {

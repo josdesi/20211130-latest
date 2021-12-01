@@ -1,5 +1,4 @@
 'use strict';
-const  { FeeAmountConditionalCopy }= use('App/Helpers/HotSheet/FeeAmountConditionalFilters');
 
 //Utils
 const appInsights = require('applicationinsights');
@@ -23,13 +22,13 @@ const {
   parseBoolean,
   SendoutReminderType,
   SendoutEventType,
-  defaultEmailSendouts,
   activityLogTypes,
   LogTypesBySendoutStatus,
   EventTypesByStatusRefuse,
   userRoles,
   addToggler,
 } = use('App/Helpers/Globals');
+const { unWrapDeclinationDetails, getEventAndActivityByType, DefaultEmailSendouts } = use('App/Utils/Sendouts');
 const { defaultWhereResolver, multipleFilterParser, multipleWhereResolver, positionFilterResolver } = use(
   'App/Helpers/QueryFilteringUtil'
 );
@@ -38,9 +37,11 @@ const Event = use('Event');
 const EventTypes = use('App/Helpers/Events');
 const Antl = use('Antl');
 const SendoutStatusSchemesKeys = invert(SendoutStatusSchemes);
+const Helpers = use('Helpers');
 const TimeoffHelper = use('App/Helpers/TimeoffHelper');
 const SendoutMessagingHelper = use('App/Helpers/SendoutMessagingHelper');
-const  { ActiveFeeAmountQueryBuilder,PlacedFeeAmountQueryBuilder }= use('App/Helpers/HotSheet/FeeAmountQueryBuilder');
+const { ActiveFeeAmountQueryBuilder, PlacedFeeAmountQueryBuilder } = use('App/Helpers/HotSheet/FeeAmountQueryBuilder');
+const { FeeAmountConditionalCopy } = use('App/Helpers/HotSheet/FeeAmountConditionalFilters');
 
 //Models
 const Sendout = use('App/Models/Sendout');
@@ -63,10 +64,10 @@ const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 const CandidateRepository = new (use('App/Helpers/CandidateRepository'))();
 const HiringAuthorityRepository = new (use('App/Helpers/HiringAuthorityRepository'))();
 const ModulePresetsConfigRepository = new (use('App/Helpers/ModulePresetsConfigRepository'))();
-const GenericSendgridTemplateEmail = new (use('App/Emails/GenericSendgridTemplateEmail'))();
 
 // Mail
 const SendoutEmail = new (use('App/Emails/SendoutEmail'))();
+const GenericSendgridTemplateEmail = new (use('App/Emails/GenericSendgridTemplateEmail'))();
 
 const minimumForWeekLeaders = 5;
 const minimumForDailyLeaders = 3;
@@ -289,7 +290,7 @@ class SendOutRepository {
     this.summaryColumns = [
       {
         key: 'metrics',
-        copy:'',
+        copy: '',
         rows: [
           {
             key: 'active_fees',
@@ -490,7 +491,7 @@ class SendOutRepository {
         [],
         true
       );
-        
+
       return {
         success: true,
         code: 200,
@@ -691,16 +692,32 @@ class SendOutRepository {
     query.whereIn(column, value);
   }
 
+  /**
+   *
+   * Creation of the Sendout or Sendover based on its type,
+   * Send or not send email to hiring authority by type and and if shipping is allowed,
+   * Send notification email to OPS and distribution lists,
+   * Send reminders based on its interviews
+   *
+   * Returns a custom response that determines the creation of a sendout or sendover.
+   *
+   * @param {Object} req
+   * @param {Integer} userId
+   * @param {String} timezone
+   *
+   * @return {Object} A success with a code 200 and message or a message error with an error code
+   */
   async create(req, userId, timezone) {
     const {
       type_id,
       status_id,
-      candidate_id,
       job_order_id,
+      candidate_id,
       fee_amount,
       attachments,
       interviews,
       hiring_authorities,
+      hiring_authority,
       declination_details,
       send_email,
       company_id,
@@ -708,56 +725,52 @@ class SendOutRepository {
       company_owner_id,
       candidate_accountable_id,
       candidate_owner_id,
+      cc_emails,
+      bcc_emails,
+      template_id,
+      subject,
+      template,
     } = req;
 
     req['timezone'] = timezone;
 
     let trx;
 
+    const allowSendEmail = parseBoolean(send_email);
+    const typeId = type_id;
     const statusId = status_id;
+
+    const isSendoutActive = statusId === SendoutStatusSchemes.Active;
+    const isSendoverActive = statusId === SendoutStatusSchemes.Sendover;
+
     const jobOrderAccountableId = job_order_accountable_id || company_owner_id;
     const candidateAccountableId = candidate_accountable_id || candidate_owner_id;
 
-    const sendoutType =
-      type_id === SendoutTypesSchemes.Sendout
-        ? {
-            event: SendoutEventType.CreatedSendout,
-            message: 'Sendout',
-            logTypeId: activityLogTypes.Sendout,
-          }
-        : {
-            event: SendoutEventType.CreatedSendover,
-            message: 'Sendover',
-            logTypeId: activityLogTypes.Sendover,
-          };
+    const eventAndActivity = getEventAndActivityByType(typeId);
 
     try {
       trx = await Database.beginTransaction();
 
-      const sendMailToHA = parseBoolean(send_email);
-      const emailDetail = await this.createEmailDetails(req, userId, trx);
-      let declinationDetails;
-      let newInterviews = [];
-
-      if (declination_details) {
-        declinationDetails = this.unWrapDeclinationDetails(declination_details);
-      }
+      const baseEmailDetails = { cc_emails, bcc_emails, template_id, subject, template };
+      const emailDetails = await this.createEmailDetails(baseEmailDetails, userId, trx);
+      const declinationDetails =
+        isSendoverActive && declination_details && unWrapDeclinationDetails(declination_details);
 
       const trackingDate = moment().format(DateFormats.SystemDefault);
       const boardDate = await this.timeOffHelper.getBoardDate(new Date());
 
       const sendout = await Sendout.create(
         {
-          sendout_type_id: type_id,
+          sendout_type_id: typeId,
           sendout_status_id: statusId,
           candidate_id,
           job_order_id,
           fee_amount,
-          sendout_email_detail_id: emailDetail.id,
+          sendout_email_detail_id: emailDetails.id,
           tracking_date: trackingDate,
           board_date: boardDate,
           declination_details: declinationDetails,
-          send_email_hiring: sendMailToHA,
+          send_email_hiring: allowSendEmail,
           job_order_accountable_id: jobOrderAccountableId,
           candidate_accountable_id: candidateAccountableId,
           created_by: userId,
@@ -766,23 +779,20 @@ class SendOutRepository {
         trx
       );
 
-      const newAttachments = await this.createAttachments(attachments, sendout.id, trx);
-      await this.createHiringAuthorithies(hiring_authorities, sendout.id, userId, trx);
+      const sendoutId = sendout.id;
 
-      await this.updateJobOrderStatus(sendout, statusId, userId, trx);
-      await this.updateCandidateStatus(sendout, statusId, userId, trx);
+      const newAttachments = await this.createAttachments(attachments, sendoutId, trx);
+      await this.createHiringAuthorities(hiring_authorities, sendoutId, userId, trx);
+      const newInterviews =
+        isSendoutActive && interviews ? await this.createInterviews(interviews, sendoutId, userId, trx) : [];
 
-      if (statusId === SendoutStatusSchemes.Active) {
-        newInterviews = await this.createInterviews(interviews, sendout.id, userId, trx);
-      }
-
-      const eventData = {
-        sendout_id: sendout.id,
+      let eventData = {
+        sendout_id: sendoutId,
         triggered_by_user_id: userId,
-        event_type_id: sendoutType.event,
+        event_type_id: eventAndActivity.eventId,
         event_details: {
           sendout,
-          email_details: emailDetail,
+          email_details: emailDetails,
           declination_details: declinationDetails,
           interviews: newInterviews,
           attachments: newAttachments,
@@ -791,67 +801,124 @@ class SendOutRepository {
 
       await SendoutEventLog.create(eventData, trx);
 
+      await this.updateJobOrderStatus(sendout, statusId, userId, trx);
+      await this.updateCandidateStatus(sendout, statusId, userId, trx);
+
+      const emailData = {
+        jobOrderId: job_order_id,
+        candidateId: candidate_id,
+        jobOrderAccountableId,
+        candidateAccountableId,
+        hiringAuthority: hiring_authority,
+        ccEmails: cc_emails,
+        bccEmails: bcc_emails,
+        subject: subject,
+        template: template,
+        userId,
+      };
+
+      let emailResponse;
+      if ((isSendoutActive || isSendoverActive) && allowSendEmail) {
+        emailResponse = await SendoutEmail.createAndSendEmailToHiringAuthority(
+          emailData,
+          newInterviews,
+          newAttachments
+        );
+      }
+
+      if (emailResponse && emailResponse.success) {
+        eventData = {
+          sendout_id: sendoutId,
+          event_type_id: SendoutEventType.EmailSentToHiringAuthority,
+          triggered_by_user_id: userId,
+          event_details: {
+            email_details: emailData,
+            newAttachments,
+            newInterviews,
+          },
+        };
+
+        await SendoutEventLog.create(eventData, trx);
+      }
+
+      if (emailResponse && !emailResponse.success) {
+        trx && (await trx.rollback());
+        throw emailResponse.message || `Unexpected error while sending email to Hiring Authority`;
+      }
+
       trx && (await trx.commit());
 
+      const sendoutDetails = await this.details(sendoutId, this.defaultRelations);
+
+      //TODO remove with event
       await this.createRemindersAndCreateEmail(
-        sendout.id,
+        sendoutId,
         statusId,
         req,
         newInterviews,
         newAttachments,
         userId,
-        sendMailToHA
+        allowSendEmail
       );
-
-      const sendoutDetails = await this.details(sendout.id, this.defaultRelations);
 
       const jobOrder = await sendout.joborder().fetch();
 
       const payloadActivityLog = {
         typeId: sendout.sendout_type_id,
         statusId: sendout.sendout_status_id,
-        logTypeId: sendoutType.logTypeId,
+        logTypeId: eventAndActivity.logId,
         companyId: jobOrder.company_id || company_id,
         jobOrderId: sendout.job_order_id,
         candidateId: sendout.candidate_id,
-        sendoutId: sendout.id,
+        sendoutId: sendoutId,
         interviews,
         declinationDetails: declination_details,
         timezone,
         userId: jobOrderAccountableId,
       };
 
-      Event.fire(EventTypes.Sendout.Created, {
-        candidateId: sendout.candidate_id,
-        jobOrderId: sendout.job_order_id,
-        userId,
-        payloadActivityLog,
-      });
+      if (!Helpers.isAceCommand()) {
+        Event.fire(EventTypes.Sendout.Created, {
+          candidateId: sendout.candidate_id,
+          jobOrderId: sendout.job_order_id,
+          userId,
+          payloadActivityLog,
+        });
+      }
 
       return {
         success: true,
         code: 201,
         data: sendoutDetails,
-        message: Antl.formatMessage('messages.success.creation', {
-          entity: sendoutType.message,
-        }),
+        message: Antl.formatMessage('messages.success.creation', { entity: eventAndActivity.message }),
       };
     } catch (error) {
-      appInsights.defaultClient.trackException({ exception: error });
-
       trx && (await trx.rollback());
+
+      appInsights.defaultClient.trackException({ exception: error });
 
       return {
         success: false,
         code: 500,
-        title: Antl.formatMessage('messages.error.sendout.creation.title', {
-          entity: sendoutType.message,
-        }),
+        title: Antl.formatMessage('messages.error.sendout.creation.title', { entity: eventAndActivity.message }),
         message: Antl.formatMessage('messages.error.sendout.message'),
       };
     }
   }
 
+  /**
+   *
+   * Update Sendover or Sendout,
+   *
+   * Returns a custom response that determines the update of a sendout or sendover.
+   *
+   * @param {Object} params
+   * @param {Object} req
+   * @param {Integer} userId
+   * @param {String} timezone
+   *
+   * @return {Object} A success with a code 200 and message or a message error with an error code
+   */
   async update(params, req, userId, timezone) {
     let trx;
 
@@ -868,6 +935,11 @@ class SendOutRepository {
       company_owner_id,
       candidate_accountable_id,
       candidate_owner_id,
+      hiring_authority,
+      cc_emails,
+      bcc_emails,
+      subject,
+      template,
     } = req;
 
     req['timezone'] = timezone;
@@ -888,15 +960,15 @@ class SendOutRepository {
       trx = await Database.beginTransaction();
 
       const sendoutId = sendout.id;
-      const sendMailToHA = parseBoolean(send_email);
+      const allowSendEmail = parseBoolean(send_email);
       const statusId = status_id;
       const currentStatus = sendout.sendout_status_id;
-      const currentSentEmailToHA = sendout.send_email_hiring;
+      const currentAllowSendEmail = sendout.send_email_hiring;
       const currentFeeAmount = sendout.fee_amount;
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
       if (sendout.job_order_accountable_id !== jobOrderAccountableIdTemp) {
@@ -914,7 +986,7 @@ class SendOutRepository {
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
       if (sendout.candidate_accountable_id !== candidateAccountableIdTemp) {
@@ -943,17 +1015,21 @@ class SendOutRepository {
         timezone,
       };
 
-      if (sendMailToHA && !currentSentEmailToHA) sendout.merge({ send_email_hiring: sendMailToHA });
+      const baseEventData = {
+        sendout_id: sendoutId,
+        triggered_by_user_id: userId,
+      };
+
+      if (allowSendEmail && !currentAllowSendEmail) sendout.merge({ send_email_hiring: allowSendEmail });
       if (currentStatus != statusId) {
         sendout.merge({ sendout_status_id: statusId, updated_by: userId });
 
         if (EventTypesByStatusRefuse[statusId] && declination_details) {
-          const declinationDetails = this.unWrapDeclinationDetails(declination_details);
+          const declinationDetails = unWrapDeclinationDetails(declination_details);
           sendout.merge({ declination_details: declinationDetails });
 
           const eventData = {
-            sendout_id: sendoutId,
-            triggered_by_user_id: userId,
+            ...baseEventData,
             event_type_id: EventTypesByStatusRefuse[statusId],
             event_details: declinationDetails,
           };
@@ -961,15 +1037,13 @@ class SendOutRepository {
           await SendoutEventLog.create(eventData, trx);
         } else if (statusId === SendoutStatusSchemes.Placed) {
           const eventData = {
-            sendout_id: sendoutId,
-            triggered_by_user_id: userId,
+            ...baseEventData,
             event_type_id: SendoutEventType.SendoutPlaced,
-            event_details: userId,
+            event_details: { statusId },
           };
 
           await SendoutEventLog.create(eventData, trx);
         }
-
         if (LogTypesBySendoutStatus[statusId]) {
           payloadActivityLog = {
             ...payloadActivityLog,
@@ -992,8 +1066,7 @@ class SendOutRepository {
 
       if (fee_amount !== currentFeeAmount && sendout.sendout_type_id === SendoutTypesSchemes.Sendout) {
         const eventData = {
-          sendout_id: sendoutId,
-          triggered_by_user_id: userId,
+          ...baseEventData,
           event_type_id: SendoutEventType.FeeAmountEditionPlaced,
           event_details: {
             tags: {
@@ -1010,8 +1083,7 @@ class SendOutRepository {
         this.deleteReminders(sendoutId, userId);
 
         const eventData = {
-          sendout_id: sendoutId,
-          triggered_by_user_id: userId,
+          ...baseEventData,
           event_type_id: SendoutEventType.DeleteReminders,
           event_details: null,
         };
@@ -1025,19 +1097,19 @@ class SendOutRepository {
           await this.updateInterviews(sendoutId, updated_interviews, req, userId, trx);
           allInterviews.push(...updated_interviews);
         }
-
         if (interviews && !!interviews.length) {
           const newInterviews = await this.createInterviews(interviews, sendoutId, userId, trx);
           allInterviews.push(...newInterviews);
 
           const eventData = {
-            sendout_id: sendoutId,
-            triggered_by_user_id: userId,
+            ...baseEventData,
             event_type_id: SendoutEventType.NewReminders,
             event_details: newInterviews,
           };
 
           await SendoutEventLog.create(eventData, trx);
+
+          // TODO move this logic with event
           await this.createReminders(sendoutId, newInterviews, req, userId, true);
 
           payloadActivityLog = {
@@ -1047,10 +1119,11 @@ class SendOutRepository {
           };
         }
 
-        if (sendMailToHA && !currentSentEmailToHA) {
-          if (attachments && !attachments.length && attachments.candidate)
+        if (allowSendEmail && !currentAllowSendEmail) {
+          if (attachments && !attachments.length && attachments.candidate) {
             allAttachments.push(...attachments.candidate);
-          if (allInterviews.length === 0) {
+          }
+          if (allInterviews && allInterviews.length === 0) {
             const data = await SendoutInterview.query().where('sendout_id', sendoutId).fetch();
             const dataJson = data.toJSON();
             allInterviews.push(...dataJson);
@@ -1058,7 +1131,41 @@ class SendOutRepository {
 
           allInterviews = allInterviews.sort((a, b) => a.id - b.id)[0];
 
-          await this.createEmailToHiringAuthority(sendoutId, req, allAttachments, allInterviews, userId);
+          const emailData = {
+            jobOrderId: sendout.job_order_id,
+            candidateId: sendout.candidate_id,
+            jobOrderAccountableId,
+            candidateAccountableId,
+            hiringAuthority: hiring_authority,
+            ccEmails: cc_emails,
+            bccEmails: bcc_emails,
+            subject: subject,
+            template: template,
+            userId,
+          };
+
+          let emailResponse = await SendoutEmail.createAndSendEmailToHiringAuthority(
+            emailData,
+            allInterviews,
+            allAttachments
+          );
+
+          if (emailResponse && !emailResponse.success) {
+            trx && (await trx.rollback());
+            throw emailResponse.message || `Unexpected error while sending email to hiring authority`;
+          }
+
+          const eventData = {
+            ...baseEventData,
+            event_type_id: SendoutEventType.EmailSentToHiringAuthority,
+            event_details: {
+              email_details: emailData,
+              allInterviews,
+              allAttachments,
+            },
+          };
+
+          await SendoutEventLog.create(eventData, trx);
         }
       }
 
@@ -1066,13 +1173,15 @@ class SendOutRepository {
 
       const sendoutDetails = await this.details(sendoutId, this.defaultRelations);
 
-      if (payloadActivityLog.logTypeId) {
-        Event.fire(EventTypes.Sendout.Updated, {
-          candidateId: sendout.candidate_id,
-          jobOrderId: sendout.job_order_id,
-          userId,
-          payloadActivityLog,
-        });
+      if (!Helpers.isAceCommand()) {
+        if (payloadActivityLog && payloadActivityLog.logTypeId) {
+          Event.fire(EventTypes.Sendout.Updated, {
+            candidateId: sendout.candidate_id,
+            jobOrderId: sendout.job_order_id,
+            userId,
+            payloadActivityLog,
+          });
+        }
       }
 
       return {
@@ -1098,11 +1207,6 @@ class SendOutRepository {
       };
     }
   }
-
-  unWrapDeclinationDetails = ({ declined_fields, declination_notes }) => ({
-    declined_fields,
-    declination_notes,
-  });
 
   /**
    * Create history log to sendout when change accountables
@@ -1131,18 +1235,6 @@ class SendOutRepository {
     };
 
     await SendoutEventLog.create(eventData, trx);
-  }
-
-  async createRemindersAndCreateEmail(sendoutId, statusId, sendoutData, interviews, attachments, userId, sendMailToHA) {
-    if (statusId === SendoutStatusSchemes.Active) {
-      if (sendMailToHA)
-        await this.createEmailToHiringAuthority(sendoutId, sendoutData, attachments, interviews, userId);
-      await this.createEmailToOperationsSendout(sendoutId, interviews[0], sendoutData, userId);
-      await this.createReminders(sendoutId, interviews, sendoutData, userId, false);
-    } else if (statusId === SendoutStatusSchemes.Sendover) {
-      await this.createEmailToHiringAuthority(sendoutId, sendoutData, attachments, null, userId);
-      await this.createEmailToOperationsSendover(sendoutId, sendoutData, userId);
-    }
   }
 
   async createReminders(sendoutId, interviews, sendoutData, userId, sendFirstReminder) {
@@ -1211,9 +1303,16 @@ class SendOutRepository {
     return Promise.all(additionalsWithCoach);
   }
 
-  async createEmailDetails(emailDetails, userId, trx) {
-    const { cc_emails, bcc_emails, template_id, subject, template } = emailDetails;
-    const detail = await SendoutEmailDetail.create(
+  /**
+   *
+   * @param {Object} email
+   * @param {Integer} userId
+   * @param {*} trx
+   * @returns {Object} email details
+   */
+  async createEmailDetails(email, userId, trx) {
+    const { cc_emails, bcc_emails, template_id, subject, template } = email;
+    const response = await SendoutEmailDetail.create(
       {
         cc_emails,
         bcc_emails,
@@ -1226,9 +1325,81 @@ class SendOutRepository {
       trx
     );
 
-    return detail;
+    return response;
   }
 
+  /**
+   *
+   * @param {Array} attachments
+   * @param {Integer} sendoutId
+   * @param {*} trx
+   * @returns {Array} attachments
+   */
+  async createAttachments(attachments, sendoutId, trx) {
+    const newAttachments = [];
+
+    if (attachments && attachments.candidate) {
+      for (const attachment of attachments.candidate) {
+        const file = await CandidateHasFile.find(attachment.id);
+        const fileCopyResult = await copyFile(file.url, `attachments/sendouts/${sendoutId}`, file.file_name);
+        if (!fileCopyResult.success) {
+          throw fileCopyResult.error;
+        }
+
+        newAttachments.push(
+          await SendoutAttachment.create(
+            {
+              sendout_id: sendoutId,
+              file_type_id: await fileType('ATTACHMENT'),
+              url: fileCopyResult.url,
+              file_name: file.file_name,
+              size: file.size ? file.size : attachment.size,
+            },
+            trx
+          )
+        );
+      }
+    }
+
+    return newAttachments;
+  }
+
+  /**
+   *
+   * @param {Array} hiringAuthorities
+   * @param {Integer} sendoutId
+   * @param {Integer} userId
+   * @param {*} trx
+   * @returns  {Array} hiring authorities
+   */
+  async createHiringAuthorities(hiringAuthorities, sendoutId, userId, trx) {
+    const newHiringAuthorities = [];
+
+    for (const hiringAuthority of hiringAuthorities) {
+      newHiringAuthorities.push(
+        await SendoutHasHiringAuthority.create(
+          {
+            sendout_id: sendoutId,
+            hiring_authority_id: hiringAuthority.id,
+            created_by: userId,
+            updated_by: userId,
+          },
+          trx
+        )
+      );
+    }
+
+    return newHiringAuthorities;
+  }
+
+  /**
+   *
+   * @param {Array} interviews
+   * @param {Integer} sendoutId
+   * @param {Inteer} userId
+   * @param {*} trx
+   * @returns {Array} interviews
+   */
   async createInterviews(interviews, sendoutId, userId, trx) {
     const newInterviews = [];
 
@@ -1302,200 +1473,23 @@ class SendOutRepository {
     }
   }
 
-  async createAttachments(attachments, sendoutId, trx) {
-    const newAttachments = [];
-
-    if (attachments.candidate) {
-      for (const attachment of attachments.candidate) {
-        const file = await CandidateHasFile.find(attachment.id);
-        const fileCopyResult = await copyFile(file.url, `attachments/sendouts/${sendoutId}`, file.file_name);
-        if (!fileCopyResult.success) {
-          throw fileCopyResult.error;
-        }
-        newAttachments.push(
-          await SendoutAttachment.create(
-            {
-              sendout_id: sendoutId,
-              file_type_id: await fileType('ATTACHMENT'),
-              url: fileCopyResult.url,
-              file_name: file.file_name,
-              size: file.size ? file.size : attachment.size,
-            },
-            trx
-          )
-        );
-      }
+  /**
+   *
+   * @param {*} sendoutId
+   * @param {*} statusId
+   * @param {*} sendoutData
+   * @param {*} interviews
+   * @param {*} attachments
+   * @param {*} userId
+   * @param {*} sendMailToHA
+   */
+  async createRemindersAndCreateEmail(sendoutId, statusId, sendoutData, interviews, attachments, userId, sendMailToHA) {
+    if (statusId === SendoutStatusSchemes.Active) {
+      await this.createEmailToOperationsSendout(sendoutId, interviews[0], sendoutData, userId);
+      await this.createReminders(sendoutId, interviews, sendoutData, userId, false);
+    } else if (statusId === SendoutStatusSchemes.Sendover) {
+      await this.createEmailToOperationsSendover(sendoutId, sendoutData, userId);
     }
-
-    return newAttachments;
-  }
-
-  async createHiringAuthorithies(hiringAuthorities, sendoutId, userId, trx) {
-    const newHiringAuthorities = [];
-
-    for (const hiringAuthority of hiringAuthorities) {
-      newHiringAuthorities.push(
-        await SendoutHasHiringAuthority.create(
-          {
-            sendout_id: sendoutId,
-            hiring_authority_id: hiringAuthority.id,
-            created_by: userId,
-            updated_by: userId,
-          },
-          trx
-        )
-      );
-    }
-
-    return newHiringAuthorities;
-  }
-
-  addSignatureEmail = (template, signature) => template.replace('{{recruiter_signature}}', signature);
-
-  async createEmailToHiringAuthority(
-    sendoutId,
-    {
-      job_order_id,
-      candidate_id,
-      job_order_accountable_id,
-      company_owner_id,
-      candidate_accountable_id,
-      candidate_owner_id,
-      hiring_authority,
-      cc_emails,
-      bcc_emails,
-      subject,
-      template,
-    },
-    attachments,
-    interviews,
-    userId
-  ) {
-    const user = await UserRepository.getDetails(userId);
-    const joborder = await JobOrderRepository.details(job_order_id, 'compact');
-    const candidate = await CandidateRepository.details(candidate_id, 'compact');
-
-    const companyOwnerId = job_order_accountable_id || company_owner_id;
-    const companyOwner = await UserRepository.getDetails(companyOwnerId, {
-      userHiddenFieldsToShow: ['email_signature'],
-    });
-
-    const companyCoach = await RecruiterRepository.getCoachInfoByRecruiterId(companyOwnerId);
-
-    const candidateOwnerId = candidate_accountable_id || candidate_owner_id;
-    const candidateOwner = await UserRepository.getDetails(candidateOwnerId);
-    const candidateCoach = await RecruiterRepository.getCoachInfoByRecruiterId(candidateOwnerId);
-
-    const emailBody = this.addSignatureEmail(template, companyOwner.email_signature || companyOwner.full_name);
-
-    const baseEmail = {
-      subject: subject,
-      html: emailBody,
-      from: {
-        email: companyOwner.email,
-        name: companyOwner.full_name,
-      },
-    };
-
-    const emailHA = hiring_authority.work_email || hiring_authority.personal_email;
-
-    let ccEmails = cc_emails.filter((email) => email !== emailHA && email !== defaultEmailSendouts.Sendouts);
-    ccEmails = ccEmails.map((email) => email.toLowerCase());
-    ccEmails = ccEmails.filter((v, i) => ccEmails.indexOf(v) === i);
-
-    let industryEmails = [];
-    joborder &&
-      joborder.specialty &&
-      joborder.specialty.industry &&
-      joborder.specialty.industry.email &&
-      industryEmails.push(joborder.specialty.industry.email);
-    candidate &&
-      candidate.specialty &&
-      candidate.specialty.industry &&
-      candidate.specialty.industry.email &&
-      industryEmails.push(candidate.specialty.industry.email);
-
-    let teamEmails = [];
-    companyCoach && companyCoach.email_team && teamEmails.push(companyCoach.email_team);
-    candidateCoach && candidateCoach.email_team && teamEmails.push(candidateCoach.email_team);
-
-    const recruiterEmails = [companyOwner.email, candidateOwner.email];
-
-    let bccEmails = [...industryEmails, ...teamEmails, ...recruiterEmails, ...bcc_emails];
-
-    bccEmails = bccEmails.map((email) => email.toLowerCase());
-    bccEmails.filter((email) => email !== defaultEmailSendouts.Sendouts);
-    bccEmails = bccEmails.filter((v, i) => bccEmails.indexOf(v) === i);
-    bccEmails = bccEmails.filter((email) => !ccEmails.includes(email));
-
-    const distributionEmails = {
-      to: emailHA,
-      cc: ccEmails,
-      bcc: bccEmails,
-      ...baseEmail,
-    };
-
-    let ccEmailsTest = ccEmails.filter((email) => defaultEmailSendouts.TestEmails.includes(email));
-    ccEmailsTest = ccEmailsTest.filter((email) => email !== user.email);
-
-    let bccEmailsTest = bccEmails.filter((email) => defaultEmailSendouts.TestEmails.includes(email));
-    bccEmailsTest = bccEmailsTest.filter((email) => email !== user.email);
-
-    const distributionEmailsTest = {
-      to: user.email,
-      cc: ccEmailsTest,
-      bcc: bccEmailsTest,
-      ...baseEmail,
-    };
-
-    let payload = Env.get('REMINDER_SENDOUT') === 'prod' ? distributionEmails : distributionEmailsTest;
-
-    if (interviews && interviews.length > 0) {
-      const interview = interviews[0];
-      const tz = moment.tz.guess();
-      const interviewDate = moment
-        .tz(interview.interview_date, interview.interview_time_zone)
-        .format(DateFormats.AgendaFormat);
-      const currenDateTz = moment(interviewDate).tz(tz).format('YYYY-M-D-H-m').split('-');
-      const startDate = currenDateTz.map((i) => Number(i));
-
-      if (!interview.interview_range) {
-        payload.invite = {
-          title: `Candidate Interview ${candidate.personalInformation.full_name}`,
-          description: `Interview with ${candidate.personalInformation.full_name} for the ${joborder.title} position.`,
-          date: startDate,
-        };
-
-        const eventData = {
-          sendout_id: sendoutId,
-          triggered_by_user_id: userId,
-          event_type_id: SendoutEventType.InviteIcsToHiringAuthority,
-          event_details: payload,
-        };
-
-        await SendoutEventLog.create(eventData);
-      }
-    }
-
-    const response = (await SendoutEmail.sendEmail(payload, attachments))[0];
-
-    const eventData = {
-      sendout_id: sendoutId,
-      event_type_id:
-        response && response.statusCode === 202
-          ? SendoutEventType.EmailSentToHiringAuthority
-          : SendoutEventType.ErrorEmailSentToHiringAuthority,
-      triggered_by_user_id: userId,
-      event_details: {
-        email_details: payload,
-        attachments,
-        interviews,
-      },
-    };
-
-    await SendoutEventLog.create(eventData);
-
-    return response;
   }
 
   async getPayloadOperation(sendout, interview, userId) {
@@ -1512,7 +1506,7 @@ class SendOutRepository {
     } = sendout;
 
     const { date, offset } = interview;
-    const sendMailToHA = parseBoolean(send_email);
+    const allowSendEmail = parseBoolean(send_email);
 
     const user = await UserRepository.getDetails(userId);
     const joborder = await JobOrderRepository.details(job_order_id, 'compact');
@@ -1561,7 +1555,7 @@ class SendOutRepository {
 
     const recruiterEmails = [companyOwner.email, candidateOwner.email];
 
-    let bccEmails = [defaultEmailSendouts.Sendouts, ...industryEmails, ...teamEmails, ...recruiterEmails];
+    let bccEmails = [DefaultEmailSendouts.Sendouts, ...industryEmails, ...teamEmails, ...recruiterEmails];
 
     bccEmails = bccEmails.map((email) => email.toLowerCase());
     bccEmails = bccEmails.filter((v, i) => bccEmails.indexOf(v) === i);
@@ -1576,23 +1570,23 @@ class SendOutRepository {
     if (type_id === SendoutTypesSchemes.Sendout) {
       distributionEmails = {
         subject: subject,
-        to: defaultEmailSendouts.Operations,
-        bcc: sendMailToHA ? defaultEmailSendouts.Sendouts : bccEmails,
+        to: DefaultEmailSendouts.Operations,
+        bcc: allowSendEmail ? DefaultEmailSendouts.Sendouts : bccEmails,
         ...payload,
       };
     } else {
       distributionEmails = {
         subject: subject,
-        to: defaultEmailSendouts.Operations,
+        to: DefaultEmailSendouts.Operations,
         bcc: bccEmails,
         ...payload,
       };
     }
 
-    let bccEmailsTest = bccEmails.filter((email) => defaultEmailSendouts.TestEmails.includes(email));
+    let bccEmailsTest = bccEmails.filter((email) => DefaultEmailSendouts.TestEmails.includes(email));
     bccEmailsTest = bccEmailsTest.filter((email) => email !== user.email);
 
-    const distributionEmailsTest = sendMailToHA
+    const distributionEmailsTest = allowSendEmail
       ? {
           subject: subject,
           to: user.email,
@@ -2117,38 +2111,35 @@ class SendOutRepository {
         querySplit = Database.raw('count(so.id) as total_status');
       }
 
-      
       const useIndividualMetrics = parseBoolean(Env.get('FEAT_INDIVIDUAL_METRICS'));
-      const sendoutClauses = useIndividualMetrics ? [
-          querySplit,
-          Database.raw('SUM( CASE WHEN so.converted = true THEN 1 ELSE 0 END ) AS converted'),
-          Database.raw( new ActiveFeeAmountQueryBuilder().getDatabaseQueryRaw(request) ),
-          Database.raw( new PlacedFeeAmountQueryBuilder().getDatabaseQueryRaw(request) ),
-          'so.sendout_status_id',
-        ] : [
-          querySplit,
-          Database.raw('SUM( CASE WHEN so.converted = true THEN 1 ELSE 0 END ) AS converted'),
-          Database.raw(`SUM( CASE WHEN so.sendout_status_id = ${SendoutStatusSchemes.Active} THEN so.fee_amount ELSE 0 END ) AS active_fees`),
-          Database.raw(`SUM( CASE WHEN so.sendout_status_id = ${SendoutStatusSchemes.Placed} THEN so.fee_amount ELSE 0 END ) AS fees_total`),
-          'so.sendout_status_id',
-        ];
+      const sendoutClauses = useIndividualMetrics
+        ? [
+            querySplit,
+            Database.raw('SUM( CASE WHEN so.converted = true THEN 1 ELSE 0 END ) AS converted'),
+            Database.raw(new ActiveFeeAmountQueryBuilder().getDatabaseQueryRaw(request)),
+            Database.raw(new PlacedFeeAmountQueryBuilder().getDatabaseQueryRaw(request)),
+            'so.sendout_status_id',
+          ]
+        : [
+            querySplit,
+            Database.raw('SUM( CASE WHEN so.converted = true THEN 1 ELSE 0 END ) AS converted'),
+            Database.raw(
+              `SUM( CASE WHEN so.sendout_status_id = ${SendoutStatusSchemes.Active} THEN so.fee_amount ELSE 0 END ) AS active_fees`
+            ),
+            Database.raw(
+              `SUM( CASE WHEN so.sendout_status_id = ${SendoutStatusSchemes.Placed} THEN so.fee_amount ELSE 0 END ) AS fees_total`
+            ),
+            'so.sendout_status_id',
+          ];
 
-      const sendouts = await this.getListing(
-          request,
-          userId,
-          timezone,
-          sendoutClauses,
-          false,
-          groupByValues,
-          false
-        );
+      const sendouts = await this.getListing(request, userId, timezone, sendoutClauses, false, groupByValues, false);
       this.calculateSummaryResult(SendoutStatusSchemes, sendouts, summaryData);
 
       const summaryColumns = cloneDeep(this.summaryColumns);
       await this.formatSummaryResult(summaryColumns, summaryData);
-      
-      useIndividualMetrics && new FeeAmountConditionalCopy().populateConditionalCopy(request,summaryColumns);
-      
+
+      useIndividualMetrics && new FeeAmountConditionalCopy().populateConditionalCopy(request, summaryColumns);
+
       return {
         success: true,
         code: 200,
@@ -2199,20 +2190,20 @@ class SendOutRepository {
 
   async formatSummaryResult(summaryColumns, summaryData) {
     const statuses = (await SendoutStatus.all()).toJSON();
-    for(const column of summaryColumns){
-      column.rows.forEach(row => {
-        if(row.type === 'status'){
-          const status = find(statuses , { id: SendoutStatusSchemes[row.key] });
-          if(status){
+    for (const column of summaryColumns) {
+      column.rows.forEach((row) => {
+        if (row.type === 'status') {
+          const status = find(statuses, { id: SendoutStatusSchemes[row.key] });
+          if (status) {
             row.style.statusColor = status.style;
             row.label = status.label;
           }
         }
         row.key = row.key.toLowerCase();
-        if(row.style.formatter === 'currency_bold'){
-          row.value = this.formatNumber(summaryData[row.key])
-        }else{
-          row.value = summaryData[row.key]
+        if (row.style.formatter === 'currency_bold') {
+          row.value = this.formatNumber(summaryData[row.key]);
+        } else {
+          row.value = summaryData[row.key];
         }
       });
     }
@@ -2237,6 +2228,22 @@ class SendOutRepository {
     });
   }
 
+  /**
+   *
+   * Convertion of the Sendover to Sendout,
+   * Send or not send email to hiring authority by type and and if shipping is allowed,
+   * Send notification email to OPS and distribution lists,
+   * Send reminders based on its interviews
+   *
+   * Returns a custom response that determines the creation of a sendout.
+   *
+   * @param {Object} params
+   * @param {Object} req
+   * @param {Integer} userId
+   * @param {String} timezone
+   *
+   * @return {Object} A success with a code 200 and message or a message error with an error code
+   */
   async convertSendoverToSendout(params, req, userId, timezone) {
     const sendout = await Sendout.find(params.id);
 
@@ -2255,6 +2262,7 @@ class SendOutRepository {
       status_id,
       fee_amount,
       attachments,
+      interviews,
       cc_emails,
       bcc_emails,
       subject,
@@ -2264,6 +2272,8 @@ class SendOutRepository {
       company_owner_id,
       candidate_accountable_id,
       candidate_owner_id,
+      send_email,
+      hiring_authority,
     } = req;
 
     req['timezone'] = timezone;
@@ -2274,25 +2284,26 @@ class SendOutRepository {
     try {
       trx = await Database.beginTransaction();
 
+      const sendoutId = sendout.id;
       const statusId = status_id;
-      const sendMailToHA = parseBoolean(req.send_email);
+      const allowSendEmail = parseBoolean(send_email);
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
 
-      const eventData = {
-        sendout_id: sendout.id,
+      let eventData = {
+        sendout_id: sendoutId,
         triggered_by_user_id: userId,
-        event_type_id: sendMailToHA
+        event_type_id: allowSendEmail
           ? SendoutEventType.SendoverSwitchedEmail
           : SendoutEventType.SendoverSwitchedwithoutEmail,
         event_details: {},
@@ -2309,7 +2320,6 @@ class SendOutRepository {
       });
 
       await emailDetails.save(trx);
-
       eventData.event_details.email_details = emailDetails;
 
       const trackingDate = moment().format(DateFormats.SystemDefault);
@@ -2323,7 +2333,7 @@ class SendOutRepository {
         board_date: boardDate,
         updated_by: userId,
         converted: true,
-        send_email_hiring: sendMailToHA,
+        send_email_hiring: allowSendEmail,
         job_order_accountable_id: jobOrderAccountableId,
         candidate_accountable_id: candidateAccountableId,
       });
@@ -2335,16 +2345,15 @@ class SendOutRepository {
 
       eventData.event_details.sendout = sendout;
 
-      const interviews = await this.createInterviews(req.interviews, sendout.id, userId, trx);
-      eventData.event_details.interviews = interviews;
+      const newInterviews = await this.createInterviews(interviews, sendoutId, userId, trx);
+      eventData.event_details.interviews = newInterviews;
 
       let newAttachments = [];
 
-      if (sendMailToHA) {
+      if (allowSendEmail) {
         if (attachments && !attachments.length && attachments.candidate) {
-          newAttachments = await this.createAttachments(attachments, sendout.id, trx);
+          newAttachments = await this.createAttachments(attachments, sendoutId, trx);
         }
-
         if (attachments && !attachments.length && attachments.toSend) {
           newAttachments.push(...attachments.toSend);
         }
@@ -2354,19 +2363,61 @@ class SendOutRepository {
 
       await SendoutEventLog.create(eventData, trx);
 
+      const emailData = {
+        jobOrderId: sendout.job_order_id,
+        candidateId: sendout.candidate_id,
+        jobOrderAccountableId,
+        candidateAccountableId,
+        hiringAuthority: hiring_authority,
+        ccEmails: cc_emails,
+        bccEmails: bcc_emails,
+        subject: subject,
+        template: template,
+        userId,
+      };
+
+      let emailResponse;
+      if (allowSendEmail) {
+        emailResponse = await SendoutEmail.createAndSendEmailToHiringAuthority(
+          emailData,
+          newInterviews,
+          newAttachments
+        );
+
+        if (emailResponse && emailResponse.success) {
+          eventData = {
+            sendout_id: sendoutId,
+            event_type_id: SendoutEventType.EmailSentToHiringAuthority,
+            triggered_by_user_id: userId,
+            event_details: {
+              email_details: emailData,
+              newAttachments,
+              newInterviews,
+            },
+          };
+
+          await SendoutEventLog.create(eventData, trx);
+        }
+      }
+
+      if (emailResponse && !emailResponse.success) {
+        trx && (await trx.rollback());
+        throw emailResponse.message || `Unexpected error while sending email to hiring authority`;
+      }
+
       trx && (await trx.commit());
 
       await this.createRemindersAndCreateEmail(
-        sendout.id,
+        sendoutId,
         statusId,
         req,
         interviews,
         newAttachments,
         userId,
-        sendMailToHA
+        allowSendEmail
       );
 
-      const sendoutDetails = await this.details(sendout.id, this.defaultRelations);
+      const sendoutDetails = await this.details(sendoutId, this.defaultRelations);
 
       const jobOrder = await sendout.joborder().fetch();
 
@@ -2384,7 +2435,9 @@ class SendOutRepository {
         userId: jobOrderAccountableId,
       };
 
-      Event.fire(EventTypes.Sendout.Converted, { payloadActivityLog });
+      if (!Helpers.isAceCommand()) {
+        Event.fire(EventTypes.Sendout.Converted, { payloadActivityLog });
+      }
 
       return {
         success: true,
@@ -2395,9 +2448,9 @@ class SendOutRepository {
         }),
       };
     } catch (error) {
-      appInsights.defaultClient.trackException({ exception: error });
-
       trx && (await trx.rollback());
+
+      appInsights.defaultClient.trackException({ exception: error });
 
       return {
         success: false,
@@ -2453,7 +2506,7 @@ class SendOutRepository {
 
     /** Creates status refussion reasons */
     if (declinationDetails && LogTypesBySendoutStatus[statusId]) {
-      const declinations = this.unWrapDeclinationDetails(declinationDetails);
+      const declinations = unWrapDeclinationDetails(declinationDetails);
       const options = declinations && declinations.declined_fields;
       const list = options
         ? '<ul>' +
@@ -3036,12 +3089,14 @@ class SendOutRepository {
 
     const results = await Database.from('sendouts')
       .select([
-        Database.raw('COALESCE(sum(CASE WHEN job_order_accountable_id = candidate_accountable_id THEN 1 ELSE 2 END), 0) as total'),
+        Database.raw(
+          'COALESCE(sum(CASE WHEN job_order_accountable_id = candidate_accountable_id THEN 1 ELSE 2 END), 0) as total'
+        ),
       ])
       .whereRaw(`sendout_type_id = ? and deleted = false and board_date::date = to_date(?, ?)`, [
         SendoutTypesSchemes.Sendout,
         moment(trackingDate).format(DateFormats.Basic),
-        DateFormats.Basic
+        DateFormats.Basic,
       ]);
 
     const total = results[0].total;
@@ -3050,12 +3105,12 @@ class SendOutRepository {
   }
 
   async getAccountableUsers(sendoutId) {
-    const getFormattedAccountables = (user) =>{
+    const getFormattedAccountables = (user) => {
       return {
         recruiter: { id: user.id, full_name: user.user_name },
         coach: { id: user.coach_id, full_name: user.coach_name },
-      }
-    }
+      };
+    };
     const accountables = {
       candidate: { recruiter: {}, coach: {} },
       joborder: { recruiter: {}, coach: {} },
@@ -3079,34 +3134,49 @@ class SendOutRepository {
       { sendoutId }
     );
     const accountableUsers = accountableUsersResult.rows;
-    if(find(accountableUsers, { type: 'error' })){
+    if (find(accountableUsers, { type: 'error' })) {
       throw `Unexpected Behaviour Ocurred While Creating Glip message For Sendout ${sendoutId}`;
     }
     const singleAccountable = find(accountableUsers, { type: 'same' });
     const caAccountable = find(accountableUsers, { type: 'candidate' });
     const joAccountable = find(accountableUsers, { type: 'joborder' });
 
-    const formattedSingleAccountable = singleAccountable 
-     ? getFormattedAccountables(singleAccountable)   
-     : null;
+    const formattedSingleAccountable = singleAccountable ? getFormattedAccountables(singleAccountable) : null;
     accountables.candidate = caAccountable
       ? getFormattedAccountables(caAccountable)
-      : (formattedSingleAccountable || accountables.candidate);
+      : formattedSingleAccountable || accountables.candidate;
     accountables.joborder = joAccountable
       ? getFormattedAccountables(joAccountable)
-      : (formattedSingleAccountable || accountables.joborder);
+      : formattedSingleAccountable || accountables.joborder;
 
     accountables.isTheSame = !!formattedSingleAccountable;
-
 
     return accountables;
   }
 
   async getGlipMessage(sendoutId) {
-    const { candidate: candidateAccountable, joborder: joborderAccountable, isTheSame = false } = await this.getAccountableUsers(sendoutId);
+    const {
+      candidate: candidateAccountable,
+      joborder: joborderAccountable,
+      isTheSame = false,
+    } = await this.getAccountableUsers(sendoutId);
     const total = await this.getTotalForCurrentDay();
 
-   return this.messagingHelper.getGlipMessage({total, candidateAccountable, joborderAccountable, isTheSame});
+    return this.messagingHelper.getGlipMessage({ total, candidateAccountable, joborderAccountable, isTheSame });
+  }
+
+  /**
+   *
+   * @param {Integer} userId
+   * @returns recruiter accountable and coach by job order
+   */
+  async getAccountableAndCoach(userId) {
+    const recruiter = await UserRepository.getDetails(userId, {
+      userHiddenFieldsToShow: ['email_signature'],
+    });
+    const coach = await RecruiterRepository.getCoachInfoByRecruiterId(userId);
+
+    return { recruiter: recruiter, coach: coach };
   }
 }
 

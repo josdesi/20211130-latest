@@ -19,6 +19,7 @@ class ConvertEmptyStringsToNull {
           return this.assignValue(data);
         });
       }
+      return value;
     }
     return value !== '' 
             ? (typeof value === 'string' ? value.trim() : value) 

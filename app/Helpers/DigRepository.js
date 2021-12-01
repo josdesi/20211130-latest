@@ -400,7 +400,7 @@ class DigRepository {
     } else {
       const { hasAtLeastOne } = await UserRepository.hasRoles(userInfo.id, [userRoles.Coach]);
       userHasCoachRole = hasAtLeastOne;
-      const userHadCoachRole = !(!find(roles, { id: userRoles.Coach })) && userHasCoachRole;
+      const userHadCoachRole = !(!!find(roles, { id: userRoles.Coach })) && userHasCoachRole;
       const userWillHaveCoachRole = !!find(roles, { id: userRoles.Coach });
       const validateUserResult = await this.canUpdateUser(userInfo, userHadCoachRole, userHasCoachRole, status);
       if(!validateUserResult.success){

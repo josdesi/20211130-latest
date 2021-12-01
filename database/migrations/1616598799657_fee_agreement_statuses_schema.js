@@ -10,13 +10,15 @@ class FeeAgreementStatusesSchema extends Schema {
     })
 
     this.schedule(async (transaction) => {
-     
+      try {
         const createPositionsIndex = 'create unique index v_positions_id_unique on v_positions (id)';
         const createSpecialtiesIndex = 'create unique index v_subspecialties_id_unique on v_subspecialties (id)';
 
         await Database.raw(createPositionsIndex).transacting(transaction);
         await Database.raw(createSpecialtiesIndex).transacting(transaction);
-      
+      } catch(error) {
+        throw error;
+      }
     });
   }
 

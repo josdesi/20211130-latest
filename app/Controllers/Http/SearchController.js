@@ -3,9 +3,11 @@
 //Utils
 const Database = use('Database');
 const appInsights = require('applicationinsights');
-const { EntityTypes, nameTypes } = use('App/Helpers/Globals');
+const { EntityTypes, nameStatus, userRoles, nameTypes } = use('App/Helpers/Globals');
 
 //Repositories
+const UserRepository = new (use('App/Helpers/UserRepository'))();
+const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */

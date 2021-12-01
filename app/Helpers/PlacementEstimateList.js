@@ -52,7 +52,6 @@ class PlacementEstimateList extends PlacementListBuilder {
         'ps.is_channel_partner',
         'ps.placement_id',
         'ps.type',
-        'ps.split_percentage'
       ])
       .innerJoin('v_users as usr', 'ps.user_id', 'usr.id')
       .whereIn('ps.placement_id', ids);
@@ -105,7 +104,7 @@ class PlacementEstimateList extends PlacementListBuilder {
       paymentScheme: fee_agreement_payment_scheme_id,
     };
     if (fee_agreement_payment_scheme_id === 'conversion') {
-      feeData.monthlyAmount = monthly_amount;
+      feeData.monthly_amount = monthly_amount;
     }
     return feeData;
   }
@@ -165,14 +164,13 @@ class PlacementEstimateList extends PlacementListBuilder {
 
   buildSplitObject(splits) {
     return splits.map((split) => {
-      const { user_id, user_email, user_initials, user_name, is_channel_partner, type, split_percentage } = split;
+      const { user_id, user_email, user_initials, user_name, is_channel_partner, type } = split;
       return {
         userId: user_id,
         userEmail: user_email,
         userInitials: user_initials,
         userName: user_name,
         isChannelPartner: is_channel_partner,
-        percentage: split_percentage,
         type,
       };
     });

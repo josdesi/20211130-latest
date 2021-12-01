@@ -1,6 +1,7 @@
 'use strict'
 const appInsights = require("applicationinsights");
 
+const Subspecialty = use('App/Models/Subspecialty');
 const Database = use('Database');
 const {multipleFilterParser} = (use('App/Helpers/QueryFilteringUtil'));
 class SubspecialtyController {

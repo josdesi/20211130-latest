@@ -10,11 +10,12 @@ const User = use('App/Models/User');
 
 //Repositories
 const BulkEmailRepository = new (use('App/Helpers/BulkEmailRepository'))();
+const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 
 //Utils
 const appInsights = require('applicationinsights');
 const Database = use('Database');
-const { deleteServerFile } = use('App/Helpers/FileHelper');
+const { moveFile, deleteServerFile } = use('App/Helpers/FileHelper');
 const { TemplateFolder, Smartags } = use('App/Helpers/Globals');
 const { groupBy, uniqWith } = use('lodash');
 
