@@ -148,13 +148,11 @@ const splitBlobUrlByContainer = (url, defaultContainer = 'files') => {
  */
 const extractRelativePathFromBlobUrl = (url, defaultContainer = 'files') => {
   const urlParts = splitBlobUrlByContainer(url, defaultContainer);
-  if(!urlParts) throw new Error('Invalid Blob URL');
   return urlParts[1];
 }
 
 const encodeFilenameInBlobUrl  = (url, defaultContainer = 'files') => {
   const urlParts = splitBlobUrlByContainer(url, defaultContainer);
-  if(!urlParts) throw new Error('Invalid Blob URL');
   const [baseUrl, path] = urlParts;
   const [folderName, fileName] = path.split('/');
   return `${baseUrl}/${defaultContainer}/${folderName}/${encodeURIComponent(fileName)}`;
