@@ -11,21 +11,24 @@ class SaveDigData extends BaseValidator {
 
   get data() {
     const requestBody = this.ctx.request.all();
-    const { dig = {}, user = {} } = requestBody;
+    const { dig, user } = requestBody;
     const extraParams = {};
-    this.userId = user.id;
-    if (
-      dig &&
-      dig.data &&
-      dig.data.length > 0 &&
-      !find(user.roles, { id: userRoles.RegionalDirector }) &&
-      !find(user.roles, { id: userRoles.Coach })
-    ) {
-      extraParams.haveDigData = true;
-    }
-    if (user && user.roles && !!find(user.roles, { id: userRoles.Coach })) {
-      this.isCoach = true;
-      extraParams.isCoach = true;
+
+    if(user){
+      this.userId = user.id;
+      if (
+        dig &&
+        dig.data &&
+        dig.data.length > 0 &&
+        !find(user.roles, { id: userRoles.RegionalDirector }) &&
+        !find(user.roles, { id: userRoles.Coach })
+      ) {
+        extraParams.haveDigData = true;
+      }
+      if (user.roles && !!find(user.roles, { id: userRoles.Coach })) {
+        this.isCoach = true;
+        extraParams.isCoach = true;
+      }
     }
     return Object.assign({}, requestBody, extraParams);
   }

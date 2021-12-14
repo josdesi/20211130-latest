@@ -993,29 +993,17 @@ class CompanyRepository {
       this.withAllListings(query);
     }
     const company = await query.fetch();
-    if (!company.rows[0]) {
-      return null;
-    }
-    
-    
-    if(company.rows[0]!= null){
 
-      const companyJSON = company.rows[0].toJSON();
-      companyJSON.hiringAuthorities =  companyJSON != null
-      ? [
-          ...(companyJSON.otherHiringAuthorities ? companyJSON.otherHiringAuthorities : []),
-          ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
-        ]
-      : [];
-    }
     
-    const companyJSON = company.rows[0].toJSON();
-    companyJSON.hiringAuthorities =  companyJSON != null
-    ? [
-        ...(companyJSON.otherHiringAuthorities ? companyJSON.otherHiringAuthorities : []),
-        ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
-      ]
-    : [];
+    
+    if(company.rows!= null){
+
+      let companyJSON = company.rows[0].toJSON();
+      companyJSON.hiringAuthorities = [];
+    
+
+    companyJSON = company.rows[0].toJSON();
+    companyJSON.hiringAuthorities = [];
 
     const coach = await RecruiterRepository.getCoachInfoByRecruiterId(companyJSON.recruiter.id);
 
@@ -1037,8 +1025,9 @@ class CompanyRepository {
         coordinates: companyJSON.coordinates
       }
     };
-
+  
     return result;
+  }
   }
 
   /**

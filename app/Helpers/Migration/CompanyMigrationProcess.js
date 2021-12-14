@@ -200,6 +200,7 @@ class CompanyMigrationProcess {
 
     if (resultConctactsPCR.success && resultConctactsPCR.data.length > 0) {
       await resultConctactsPCR.data.map((data) => {
+        if (data != null){
         const {
           FirstName,
           LastName,
@@ -213,7 +214,7 @@ class CompanyMigrationProcess {
           EmailAddress,
           Status,
           UserName,
-        } = data || {};
+        } = data;
         const [otherEmailData = {}] = data.CustomFields;
         const [otherEmail = ''] = otherEmailData.Values;
         this.contacts.push({
@@ -236,7 +237,8 @@ class CompanyMigrationProcess {
           Subspecialty: subspecialty,
           email_other: otherEmail
         });
-      });
+      }
+    });
     } else if (!resultConctactsPCR.success) {
       return {
         error: `Error From PCR Trying to get Contacts ${resultConctactsPCR.error}`,

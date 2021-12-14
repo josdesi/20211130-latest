@@ -369,10 +369,11 @@ const JobOrder = module.exports = {
       const { job_order_id, recruiter_id } = recruiterAssignment;
       await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: previousRecruiterId});
       const operatingMetric = await JobOrderRepository.initializeOperatingMetrics(job_order_id, recruiter_id);
-      if(!operatingMetric){
+      if(operatingMetric){
         appInsights.defaultClient.trackException({ exception: `The Operating for the job order <${job_order_id}> on the user <${recruiter_id}> couldn't be created` });
+      
+        await JobOrder.scheduleMetricJobs({jobOrderId:operatingMetric.job_order_id, userId:operatingMetric.created_by});
       }
-      await JobOrder.scheduleMetricJobs({jobOrderId:operatingMetric.job_order_id, userId:operatingMetric.created_by});
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }
