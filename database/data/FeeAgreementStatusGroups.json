@@ -1,0 +1,47 @@
+[{
+	"id": 1,
+	"title": "Pending Signature",
+	"style_class_name": "#F35712",
+	"created_at": null,
+	"updated_at": null
+}, {
+	"id": 2,
+	"title": "Signed",
+	"style_class_name": "#27AE60",
+	"created_at": null,
+	"updated_at": null
+}, {
+	"id": 3,
+	"title": "Pending Validation",
+	"style_class_name": "#E9250C",
+	"created_at": null,
+	"updated_at": null
+}, {
+	"id": 4,
+	"title": "Declined",
+	"style_class_name": "#545764",
+	"created_at": null,
+	"updated_at": null
+},
+{
+	"id": 5,
+	"title": "Void",
+	"style_class_name": "#1A1C21",
+	"created_at": null,
+	"updated_at": null
+},
+{
+	"id": 6,
+	"title": "Expired",
+	"style_class_name": "#E1E4EB",
+	"created_at": null,
+	"updated_at": null
+},
+{
+	"id": 7,
+	"title": "Canceled",
+	"style_class_name": "#DDDDDD",
+	"created_at": null,
+	"updated_at": null
+}
+]
