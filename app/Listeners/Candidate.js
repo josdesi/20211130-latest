@@ -370,10 +370,11 @@ const Candidate = module.exports = {
       const { candidate_id, recruiter_id } = recruiterAssignment;
       await Candidate.stopMetricJobs({candidateId: candidate_id, userId: previousRecruiterId});
       const operatingMetric = await CandidateRepository.initializeOperatingMetrics(candidate_id, recruiter_id);
-      if(!operatingMetric){
+      if(operatingMetric){
         appInsights.defaultClient.trackException({ exception: `The Operating for the candidate <${candidate_id}> on the user <${recruiter_id}> couldn't be created` });
+        
+        await Candidate.scheduleMetricJobs({candidateId:operatingMetric.candidate_id, userId:operatingMetric.created_by});
       }
-      await Candidate.scheduleMetricJobs({candidateId:operatingMetric.candidate_id, userId:operatingMetric.created_by});
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }
@@ -389,9 +390,11 @@ const Candidate = module.exports = {
    */
   stopMetricsForAccountableRecruiter: async ({ additionalRecruiter }) => {
     try {
-      const { candidate_id, recruiter_id, type } = additionalRecruiter;
-      if(additionalRecruiter && type === AdditionalRecruiterTypes.Accountable){
-        await Candidate.stopMetricJobs({candidateId: candidate_id, userId: recruiter_id});
+      if(additionalRecruiter){
+        const { candidate_id, recruiter_id, type } = additionalRecruiter;
+        if(type === AdditionalRecruiterTypes.Accountable){
+          await Candidate.stopMetricJobs({candidateId: candidate_id, userId: recruiter_id});
+        }
       }
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });

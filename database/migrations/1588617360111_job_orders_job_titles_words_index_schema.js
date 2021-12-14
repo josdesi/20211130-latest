@@ -11,12 +11,6 @@ class JobOrdersJobTitlesWordsIndexSchema extends Schema {
         ts_stat('select to_tsvector( ''simple'', title) from job_orders');
     `;
 
-    const createGinIndex = `
-    CREATE INDEX job_orders_job_titles_words_indices_index
-    ON core.job_orders_job_titles_words_indices USING GIN (word gin_trgm_ops)
-    `;//This query is working only with admin user targeting the core schema directly
-
-
     this.raw(createWordIndexTable)
         //.raw(createGinIndex);
   }

@@ -14,14 +14,12 @@ const { batchInsert } = use('App/Helpers/QueryUtils');
 //Models
 const HiringAuthority = use('App/Models/HiringAuthority');
 const { auditFields } = use('App/Helpers/Globals');
-const Company = use('App/Models/Company');
 const HiringAuthorityNote = use('App/Models/HiringAuthorityNote');
 const HiringAuthorityFromName = use('App/Models/HiringAuthorityFromName');
 const HiringAuthorityHasFile = use('App/Models/HiringAuthorityHasFile');
 const HiringAuthorityHasCompany = use('App/Models/HiringAuthorityHasCompany');
 const HiringAuthorityActivityLog = use('App/Models/HiringAuthorityActivityLog');
 const Name = use('App/Models/Name');
-const HiringAuthorityBulkActivityReference = use('App/Models/HiringAuthorityBulkActivityReference');
 
 //Repositories
 const nameRepository = new (use('App/Helpers/NameRepository'))();

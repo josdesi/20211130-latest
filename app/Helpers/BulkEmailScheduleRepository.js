@@ -76,12 +76,12 @@ class BulkEmailScheduleRepository {
    * @return {Object} bulk email created
    */
   async create(emailData, userId, candidateIds = [], jobOrderIds = []) {
-    let trx;
-    try {
+      
+      const trx = await Database.beginTransaction();    try {
       const bulkValidation = await BulkEmailRepository.validateBulk(emailData, userId, candidateIds, jobOrderIds);
       if (!bulkValidation.success) return bulkValidation;
 
-      const trx = await Database.beginTransaction();
+      
 
       emailData.is_draft = true; //This allows to create the is_sent as false
 
@@ -108,7 +108,7 @@ class BulkEmailScheduleRepository {
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
 
-      trx && (await trx.rollback());
+      await trx.rollback();
       return {
         success: false,
         code: 500,

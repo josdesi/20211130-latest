@@ -17,7 +17,6 @@ const PersonalInformation = use('App/Models/PersonalInformation');
 const Contact = use('App/Models/Contact');
 const Address = use('App/Models/Address');
 const Name = use('App/Models/Name');
-const ZipCode = use('App/Models/ZipCode');
 const NameActivityLog = use('App/Models/NameActivityLog');
 const NameNote = use('App/Models/NameNote');
 const CandidateFromName = use('App/Models/CandidateFromName');
@@ -25,7 +24,6 @@ const NameStatus = use('App/Models/NameStatus');
 const HiringAuthorityFromName = use('App/Models/HiringAuthorityFromName');
 const CompanyHasNameEmployee = use('App/Models/CompanyHasNameEmployee');
 const Company = use('App/Models/Company');
-const NameBulkActivityReference = use('App/Models/NameBulkActivityReference');
 
 //Repositories
 const LocationRepository = new (use('App/Helpers/LocationRepository'))();
@@ -906,7 +904,6 @@ class NameRepository {
       const suggestedCompaniesIds = [];
       const lowSimilarity = '0.20';
       const mediumSimilarity = '0.25';
-      const highSimilarity = '0.30';
 
       const name = await Database.table('contacts_directory')
         .where({

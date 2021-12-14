@@ -30,7 +30,7 @@ class FeeAgreementStatusSeeder {
         await FeeAgreementStatus.create(feeAgreementStatus, transaction);
       }
       isAtomic && (await transaction.commit());
-    } catch(error) {0
+    } catch(error) {
       isAtomic && (await transaction.rollback());
     }
   }

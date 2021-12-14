@@ -2,7 +2,6 @@
 
 const Agenda = require('agenda');
 const Helpers = use('Helpers');
-const { JobNames } = use('App/Scheduler/Constants');
 
 class AgendaService {
   constructor(Config, section = 'inventory') {

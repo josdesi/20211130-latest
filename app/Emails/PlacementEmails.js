@@ -34,9 +34,6 @@ class PlacementEmails {
     }
     const splits = await this.getSplits(placementId);
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const {
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
       joborder: { title: jobOrderTitle, company: { name: companyName } = {} } = {},
@@ -104,9 +101,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id, created_by: userId, created_at } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const [suggestedUpdate = {}] = (
       await PlacementSuggestedUpdate.query()
         .where('placement_id', placementId)
@@ -171,9 +165,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id, created_by: userId, updated_by } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
 
     const splits = await this.getSplits(placementId);
 
@@ -254,9 +245,7 @@ class PlacementEmails {
     const { id: placementId, sendout_id, updated_by: userId, placement_status_id } = placement;
     const splits = await this.getSplits(placementId);
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
+
     const {
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
       joborder: { title: jobOrderTitle, company: { name: companyName } = {} } = {},
@@ -315,9 +304,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id, fall_off_reason = '', updated_by: userId } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const splits = await this.getSplits(placementId);
     const { 
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
@@ -368,9 +354,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id, fall_off_reason = '', updated_by: userId } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const splits = await this.getSplits(placementId);
     const { 
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
@@ -419,9 +402,6 @@ class PlacementEmails {
     const { id: placementId, sendout_id, updated_by: userId, placement_status_id } = placement;
     const splits = await this.getSplits(placementId);
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const { title: status = '' } = await PlacementStatus.find(placement_status_id);
     const {
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
@@ -485,9 +465,6 @@ class PlacementEmails {
     const { id: placementId, sendout_id, updated_by: userId, placement_status_id } = placement;
     const splits = await this.getSplits(placementId);
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const { title: status = '' } = await PlacementStatus.find(placement_status_id);
     const {
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
@@ -547,9 +524,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id, updated_by: financeId, created_by: userId } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const splits = await this.getSplits(placementId);
     const { 
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
@@ -631,9 +605,6 @@ class PlacementEmails {
     const { id: placementId, sendout_id, updated_by: userId, placement_status_id } = placement;
     const splits = await this.getSplits(placementId);
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const {
       candidate: { personalInformation: { full_name: candidateName } = {} } = {},
       joborder: { title: jobOrderTitle, company: { name: companyName } = {} } = {},
@@ -692,9 +663,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const splits = await this.getSplits(placementId);
     const { number, created_by : financeUserId } = invoiceData;
     const {
@@ -739,9 +707,6 @@ class PlacementEmails {
     const SendOutRepository = new (use('App/Helpers/SendOutRepository'))();
     const { id: placementId, sendout_id } = placement;
     const sendout = { ...(await SendOutRepository.details(sendout_id, SendOutRepository.defaultRelations)) };
-    if (!sendout) {
-      return;
-    }
     const splits = await this.getSplits(placementId);
     const { amount, created_by : financeUserId, created_at } = paymentData;
     const {

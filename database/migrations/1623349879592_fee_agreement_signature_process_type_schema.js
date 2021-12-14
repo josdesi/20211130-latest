@@ -2,7 +2,6 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
-const Database = use('Database');
 const FeeAgreementSignatureProcessTypeSeeder = require('../seeds/FeeAgreementSignatureProcessTypeSeeder');
 class FeeAgreementSignatureProcessTypeSchema extends Schema {
   up () {

@@ -191,7 +191,7 @@ class HiringAuthorityDirectoryUpdater extends DirectoryUpdater {
    * @returns
    */
   async updateOrCreateDirectoryInformation(id) {
-    try {
+    
       const directoryInformationId = this.getDirectoryInformationId(id);
       const { count } = await Database.table('contacts_directory')
         .select([Database.raw('count(*) as count')])
@@ -341,9 +341,7 @@ class HiringAuthorityDirectoryUpdater extends DirectoryUpdater {
       `;
         await Database.raw(insertQuery, { id });
       }
-    } catch (error) {
-      throw error;
-    }
+
   }
 
   /**

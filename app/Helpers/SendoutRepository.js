@@ -984,7 +984,7 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
       if (sendout.job_order_accountable_id !== jobOrderAccountableIdTemp) {
@@ -1002,7 +1002,7 @@ class SendOutRepository {
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
       if (sendout.candidate_accountable_id !== candidateAccountableIdTemp) {
@@ -1543,13 +1543,13 @@ class SendOutRepository {
       company: joborder ? joborder.company.name : '',
       hiring_authority: hiring_authority.full_name || '',
       candidate: candidate ? candidate.personalInformation.full_name : '',
-      company_recruiter: companyOwner ? companyOwner.full_name : joborder.recruiter.full_name,
-      company_recruiter_initials: companyOwner ? companyOwner.initials : joborder.recruiter.initials,
+      company_recruiter: companyOwner != null ? companyOwner.full_name : joborder.recruiter.full_name,
+      company_recruiter_initials: companyOwner != null ? companyOwner.initials : joborder.recruiter.initials,
       company_coach: companyCoach ? companyCoach.full_name : '',
-      candidate_recruiter: candidateOwner
+      candidate_recruiter: candidateOwner != null
         ? candidateOwner.full_name
         : candidate.recruiter.personalInformation.full_name,
-      candidate_recruiter_initials: candidateOwner ? candidateOwner.initials : candidate.recruiter.initials,
+      candidate_recruiter_initials: candidateOwner != null ? candidateOwner.initials : candidate.recruiter.initials,
       candidate_coach: candidateCoach ? candidateCoach.full_name : '',
     };
 
@@ -1569,7 +1569,7 @@ class SendOutRepository {
     companyCoach && companyCoach.email_team && teamEmails.push(companyCoach.email_team);
     candidateCoach && candidateCoach.email_team && teamEmails.push(candidateCoach.email_team);
 
-    const recruiterEmails = [companyOwner.email, candidateOwner.email];
+    const recruiterEmails = [companyOwner ? companyOwner.email: null, candidateOwner ? candidateOwner.email: null];
 
     let bccEmails = [DefaultEmailSendouts.Sendouts, ...industryEmails, ...teamEmails, ...recruiterEmails];
 
@@ -1873,25 +1873,27 @@ class SendOutRepository {
 
     if (jsonSendouts && jsonSendouts.length === 0) return statusId;
 
-    let prevSendouts = jsonSendouts.filter((sendout) => sendout.id !== sendoutId);
-    prevSendouts = prevSendouts.filter(
-      (sendout) =>
-        sendout.sendout_status_id !== SendoutStatusSchemes.Declined &&
-        sendout.sendout_status_id !== SendoutStatusSchemes.NoOffer
-    );
+    if (jsonSendouts){
+        let prevSendouts = jsonSendouts.filter((sendout) => sendout.id !== sendoutId);
+          prevSendouts = prevSendouts.filter(
+            (sendout) =>
+              sendout.sendout_status_id !== SendoutStatusSchemes.Declined &&
+              sendout.sendout_status_id !== SendoutStatusSchemes.NoOffer
+          );
 
-    for (let status in SendoutStatusSchemes) {
-      if (statusId === SendoutStatusSchemes[status] || this.checkStatus(prevSendouts, SendoutStatusSchemes[status])) {
-        const hasSendover = prevSendouts.filter(
-          (sendout) => sendout.sendout_status_id === SendoutStatusSchemes.Sendover
-        );
-        const hasActive = prevSendouts.filter((sendout) => sendout.sendout_status_id === SendoutStatusSchemes.Active);
+          for (let status in SendoutStatusSchemes) {
+            if (statusId === SendoutStatusSchemes[status] || this.checkStatus(prevSendouts, SendoutStatusSchemes[status])) {
+              const hasSendover = prevSendouts.filter(
+                (sendout) => sendout.sendout_status_id === SendoutStatusSchemes.Sendover
+              );
+              const hasActive = prevSendouts.filter((sendout) => sendout.sendout_status_id === SendoutStatusSchemes.Active);
 
-        if (hasSendover && hasSendover.length > 0 && statusId !== SendoutStatusSchemes.Active)
-          return SendoutStatusSchemes.Sendover;
-        if (hasActive && hasActive.length > 0) return SendoutStatusSchemes.Active;
-        return SendoutStatusSchemes[status];
-      }
+              if (hasSendover && hasSendover.length > 0 && statusId !== SendoutStatusSchemes.Active)
+                return SendoutStatusSchemes.Sendover;
+              if (hasActive && hasActive.length > 0) return SendoutStatusSchemes.Active;
+              return SendoutStatusSchemes[status];
+            }
+          }
     }
   }
 
@@ -1920,40 +1922,42 @@ class SendOutRepository {
   }
 
   async updateJobOrderStatus(sendout, statusId, userId, trx) {
+    if (jobOrder!= null) {
     const sendoutId = sendout.id;
     const jobOrder = await sendout.joborder().fetch();
     const jobOrderId = jobOrder.id;
     const currentStatusId = jobOrder.status_id;
 
-    if (!jobOrder) return;
-    if (currentStatusId === JobOrderStatusSchemes.Placed) return;
+    
+      if (currentStatusId === JobOrderStatusSchemes.Placed) return;
 
-    const whereClause = { job_order_id: jobOrderId };
-    const sendoutStatus = await this.determineEntityStatus(sendoutId, statusId, whereClause);
-    const { status_id } = this.determineJobOrderStatus(sendoutStatus);
+      const whereClause = { job_order_id: jobOrderId };
+      const sendoutStatus = await this.determineEntityStatus(sendoutId, statusId, whereClause);
+      const { status_id } = this.determineJobOrderStatus(sendoutStatus);
 
-    jobOrder.merge({
-      status_id,
-      updated_by: userId,
-    });
+      jobOrder.merge({
+        status_id,
+        updated_by: userId,
+      });
 
-    await jobOrder.save(trx);
+      await jobOrder.save(trx);
 
-    if (currentStatusId === JobOrderStatusSchemes.Placed) {
-      await trx
-        .table('companies')
-        .update('company_type_id', companyType.Client)
-        .whereRaw('id in (select company_id from job_orders where id = ?)', jobOrderId);
+      if (currentStatusId === JobOrderStatusSchemes.Placed) {
+        await trx
+          .table('companies')
+          .update('company_type_id', companyType.Client)
+          .whereRaw('id in (select company_id from job_orders where id = ?)', jobOrderId);
+      }
+
+      const eventData = {
+        sendout_id: sendoutId,
+        triggered_by_user_id: userId,
+        event_type_id: SendoutEventType.UpdatedJobOrder,
+        event_details: jobOrder,
+      };
+      await SendoutEventLog.create(eventData, trx);
     }
-
-    const eventData = {
-      sendout_id: sendoutId,
-      triggered_by_user_id: userId,
-      event_type_id: SendoutEventType.UpdatedJobOrder,
-      event_details: jobOrder,
-    };
-
-    await SendoutEventLog.create(eventData, trx);
+    
   }
 
   determineCandidateStatus(statusId) {
@@ -1981,31 +1985,36 @@ class SendOutRepository {
   async updateCandidateStatus(sendout, statusId, userId, trx) {
     const sendoutId = sendout.id;
     const candidate = await sendout.candidate().fetch();
-    const candidateId = candidate.id;
-    const currentStatusId = candidate.status_id;
+    if(candidate){
+      const candidateId = candidate.id;
+      const currentStatusId = candidate.status_id;
 
-    if (!candidate) return;
-    if (currentStatusId === CandidateStatusSchemes.Placed) return;
 
-    const whereClause = { candidate_id: candidateId };
-    const sendoutStatus = await this.determineEntityStatus(sendoutId, statusId, whereClause);
-    const { status_id } = this.determineCandidateStatus(sendoutStatus);
+      if (currentStatusId === CandidateStatusSchemes.Placed) return;
 
-    candidate.merge({
-      status_id,
-      updated_by: userId,
-    });
+      const whereClause = { candidate_id: candidateId };
+      const sendoutStatus = await this.determineEntityStatus(sendoutId, statusId, whereClause);
+      const { status_id } = this.determineCandidateStatus(sendoutStatus);
 
-    await candidate.save(trx);
+      
+        candidate.merge({
+          status_id,
+          updated_by: userId,
+        });
+    
+        await candidate.save(trx);
+    
+        const eventData = {
+          sendout_id: sendoutId,
+          triggered_by_user_id: userId,
+          event_type_id: SendoutEventType.UpdatedCandidate,
+          event_details: candidate,
+        };
+    
+      
 
-    const eventData = {
-      sendout_id: sendoutId,
-      triggered_by_user_id: userId,
-      event_type_id: SendoutEventType.UpdatedCandidate,
-      event_details: candidate,
-    };
-
-    await SendoutEventLog.create(eventData, trx);
+      await SendoutEventLog.create(eventData, trx);
+    }
   }
 
   async listingSendoutTypes() {
@@ -2429,13 +2438,13 @@ class SendOutRepository {
 
       const jobOrderAccountableIdTemp = job_order_accountable_id || company_owner_id;
       const jobOrderAccountableId =
-        sendout && sendout.job_order_accountable_id === jobOrderAccountableIdTemp
+        sendout.job_order_accountable_id === jobOrderAccountableIdTemp
           ? sendout.job_order_accountable_id
           : jobOrderAccountableIdTemp;
 
       const candidateAccountableIdTemp = candidate_accountable_id || candidate_owner_id;
       const candidateAccountableId =
-        sendout && sendout.candidate_accountable_id === candidateAccountableIdTemp
+        sendout.candidate_accountable_id === candidateAccountableIdTemp
           ? sendout.candidate_accountable_id
           : candidateAccountableIdTemp;
 
@@ -2611,6 +2620,7 @@ class SendOutRepository {
   }
 
   async getMessageActivityLog(payload, sendoutId, userId) {
+    if(payload){
     const { typeId, statusId, jobOrderId, candidateId, interviews, declinationDetails, converted, deleted, timezone } =
       payload;
 
@@ -2629,7 +2639,7 @@ class SendOutRepository {
       Functional Title: ${jobOrder ? jobOrder.title : ''} <br>
     `;
 
-    if (payload && parseBoolean(deleted)) {
+    if (parseBoolean(deleted)) {
       return `${typeId === SendoutTypesSchemes.Sendover ? 'Sendover' : 'Sendout'} deleted by ${user.full_name} ${
         user.initials
       } <br> ${sendoutBody}`;
@@ -2672,6 +2682,7 @@ class SendOutRepository {
 
     dateCopy = dateCopy ? `${dateCopy} <br>` : '';
     return `${dateCopy} ${sendoutBody} ${extraBody}`;
+  }
   }
 
   async updateFeeAmount(feeAmount, sendoutId) {

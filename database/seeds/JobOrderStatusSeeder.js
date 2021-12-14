@@ -13,7 +13,6 @@ const { JobOrderStatusSchemes, StatusColorsSchemes } = use('App/Helpers/Globals'
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
 
 // Models
 const JobOrderStatus = use('App/Models/JobOrderStatus');

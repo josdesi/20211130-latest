@@ -11,7 +11,7 @@ class AceController {
 
   async migrationsStatus({ request, response }) {
     try {
-      const output = await ace.call('migration:status', {}, {});
+      await ace.call('migration:status', {}, {});
       return response.ok('Completed');
     } catch(error) {
       appInsights.defaultClient.trackException({ exception: error });
@@ -22,7 +22,7 @@ class AceController {
 
   async migrationsRun({ request, response }) {
     try {
-      const output = await ace.call('migration:run', {}, { force: true });
+      await ace.call('migration:run', {}, { force: true });
       return response.ok('Completed');
     } catch(error) {
       appInsights.defaultClient.trackException({ exception: error });

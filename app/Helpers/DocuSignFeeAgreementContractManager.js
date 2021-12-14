@@ -109,7 +109,7 @@ class DocuSignFeeAgreementContractManager {
     const currentEnvelope = await DocuSign.getEnvelope(feeAgreement.contract_id, 'recipients');
     if (!currentEnvelope) return false;
     const searchedSignerRole = currentEnvelope.recipients.signers.filter(signer => signer.roleName === signerRole)[0] || null;
-    return searchedSignerRole.email;
+    return searchedSignerRole?.email;
   }
 
 

@@ -81,11 +81,7 @@ class PCRService {
   async getContactsByCompanyId(id) {
     try {
       let page = 1;
-      let response = {
-        data : {
-          Results : []
-        }
-      }
+      let response = null;
       const contacts = [];
       do {
         response = await this.executeRequest('get',`${this.PCRUrl}/candidates/`, {

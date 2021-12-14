@@ -151,7 +151,7 @@ class GenericSendgridTemplateEmail {
       return 'The sendgrid template id is malformed';
     }
 
-    if (typeof generalDynamicTemplateData !== 'object' && generalDynamicTemplateData !== null) {
+    if (generalDynamicTemplateData !== null) {
       return 'the generic dynamic template data is malformed';
     }
 
