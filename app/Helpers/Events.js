@@ -123,7 +123,6 @@ const Events = {
     Created: 'placement:created',
     Updated: 'placement:updated',
     SuggestionUpdate: 'placement:suggestion:update',
-    SuggestionUpdate: 'placement:suggestion:update',
     InvoiceCreated: 'placement:invoice:created',
     InvoiceUpdated: 'placement:invoice:updated',
     InvoiceDeleted: 'placement:invoice:deleted',

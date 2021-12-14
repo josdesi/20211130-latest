@@ -11,9 +11,7 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const EmailOptOutType = use('App/Models/EmailOptOutType');
-const Database = use('Database');
 const { EmailOptOutTypes } = use('App/Helpers/Globals');
 
 class EmailOptOutTypeSeeder {

@@ -1,8 +1,6 @@
 'use strict';
-const appInsights = require("applicationinsights");
 const hellosign = require('hellosign-sdk');
 const crypto = require('crypto');
-const fs = require('fs');
 class HelloSignService {
   constructor(config) {
     this.clientId = config.get('helloSign.clientId');
@@ -125,15 +123,12 @@ class HelloSignService {
   }
 
   async updateEmails(signatureRequestId, signatureId, email) {
-    try {
+    
       const response = await this.hellosign.signatureRequest.update(signatureRequestId, {
         signature_id: signatureId,
         email_address: email,
       });
-      return response.data;
-    } catch(error) {
-      throw error;
-    }
+      return response.data;    
   }
 
 }

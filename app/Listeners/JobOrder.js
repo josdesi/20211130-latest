@@ -1,7 +1,7 @@
 'use strict'
 //Utils
 const appInsights = require('applicationinsights');
-const { JobOrderTypeSchemes, EntityTypes, OperationType, AdditionalRecruiterStatus, AdditionalRecruiterTypes, DateFormats, JobOrderStatusSchemes } = use('App/Helpers/Globals');
+const { JobOrderTypeSchemes, EntityTypes, OperationType, AdditionalRecruiterStatus, AdditionalRecruiterTypes, DateFormats } = use('App/Helpers/Globals');
 const Agenda = use('Services/Agenda');
 const { JobNames } = use('App/Scheduler/Constants');
 const OperatingMetricConfiguration = use('App/Models/OperatingMetricConfiguration');
@@ -14,7 +14,6 @@ const JobOrderRepository = new (use('App/Helpers/JobOrderRepository'))();
 const InventoryNotification = new (use('App/Notifications/InventoryNotifications'))();
 const OperatingNotification = new (use('App/Notifications/OperatingNotifications'))();
 const CandidateAndJobMatchNotification = new (use('App/Notifications/CandidateAndJobMatchNotification'))();
-const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
 const RequestAdditionalRecruiterNotifications = new (use('App/Notifications/RequestAdditionalRecruiterNotifications'))();
 
 
@@ -370,10 +369,11 @@ const JobOrder = module.exports = {
       const { job_order_id, recruiter_id } = recruiterAssignment;
       await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: previousRecruiterId});
       const operatingMetric = await JobOrderRepository.initializeOperatingMetrics(job_order_id, recruiter_id);
-      if(!operatingMetric){
+      if(operatingMetric){
         appInsights.defaultClient.trackException({ exception: `The Operating for the job order <${job_order_id}> on the user <${recruiter_id}> couldn't be created` });
+      
+        await JobOrder.scheduleMetricJobs({jobOrderId:operatingMetric.job_order_id, userId:operatingMetric.created_by});
       }
-      await JobOrder.scheduleMetricJobs({jobOrderId:operatingMetric.job_order_id, userId:operatingMetric.created_by});
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }
@@ -389,9 +389,11 @@ const JobOrder = module.exports = {
    */
   stopMetricsForAccountableRecruiter: async ({ additionalRecruiter }) => {
     try {
-      const { job_order_id, recruiter_id, type } = additionalRecruiter;
-      if(additionalRecruiter && type === AdditionalRecruiterTypes.Accountable){
-        await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: recruiter_id});
+      if( additionalRecruiter != null){
+        const { job_order_id, recruiter_id, type } = additionalRecruiter;
+        if(type === AdditionalRecruiterTypes.Accountable){
+          await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: recruiter_id});
+        }
       }
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });

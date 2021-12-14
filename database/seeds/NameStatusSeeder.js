@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
 const { nameTypes } = use('App/Helpers/Globals');
 const Database = use('Database')
 

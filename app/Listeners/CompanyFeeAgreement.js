@@ -142,10 +142,6 @@ const CompanyFeeAgreement = {
     buildPayloads: FeeAgreementNotification.getDeclinedByCoachNotifications.bind(FeeAgreementNotification),
   }),
 
-  notifySentToCoachValidation: getGenericNotifier({
-    buildPayloads: FeeAgreementNotification.getSentToCoachValidationNotifications.bind(FeeAgreementNotification),
-  }),
-
   notifySentToCoachValidation:  getGenericNotifier({
     buildPayloads: FeeAgreementNotification.getSentToOperationsValidationNotifications.bind(FeeAgreementNotification),
   }),

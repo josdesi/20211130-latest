@@ -504,87 +504,89 @@ class PlacementRepository {
       }
 
       trx = await Database.beginTransaction();
-      placement.merge(dataToUpdate);
-      await placement.save(trx);
+      if(trx != null){             
+                    placement.merge(dataToUpdate);
+                    await placement.save(trx);
 
-      //Store Placement Splits
-      await trx.table('placement_splits').where('placement_id', id).del();
-      for (const split of splits) {
-        await PlacementSplit.create(
-          {
-            placement_id: placement.id,
-            user_id: split.user_id,
-            split_percentage: split.percent,
-            is_channel_partner: split.is_channel_partner,
-            type: split.type,
-            created_by: userId,
-            updated_by: userId,
-          },
-          trx
-        );
+                    //Store Placement Splits
+                    await trx.table('placement_splits').where('placement_id', id).del();
+                    for (const split of splits) {
+                      await PlacementSplit.create(
+                        {
+                          placement_id: placement.id,
+                          user_id: split.user_id,
+                          split_percentage: split.percent,
+                          is_channel_partner: split.is_channel_partner,
+                          type: split.type,
+                          created_by: userId,
+                          updated_by: userId,
+                        },
+                        trx
+                      );
+                    }
+
+                    //Store PlacementFiles
+                    for (const file of files) {
+                      const { type_id, action, entity, id } = file;
+                      const fileType = find(modulePlacementFiles, { _id: type_id });
+                      if (!fileType) continue;
+                      const fieldsToSearch = fileType._multiple ? { id } : { file_type_id: type_id, placement_id: placement.id };
+                      const fileExist = find(placementFiles.rows, fieldsToSearch);
+                      const existOtherFileWithSameType = find(placementFiles.rows, (val) => val.file_type_id == type_id && val.id != id );
+                      switch (action) {
+                        case 'delete':
+                          const haveNewFileToCreateWithSameType = find(files, (val) => val.type_id == type_id && !val.action );
+                          if ((!fileType._required && type_id != types.REFERENCE_RELEASE_EMAIL._id) || haveNewFileToCreateWithSameType || existOtherFileWithSameType || 
+                              (type_id == types.REFERENCE_RELEASE_EMAIL._id && await this.candidateHaveReferenceRelease(placement.sendout_id))) {
+                            await trx.table('placement_has_files').where(fieldsToSearch).del();
+                            if(fileExist){
+                              await deleteServerFile(fileExist.url);
+                              remove(placementFiles.rows,fieldsToSearch);
+                            }
+                          }
+                          break;
+
+                        default:
+                          const { fileName, fileUrl, skip = false, success = true, message, code } = await this.getDataForFile(file, userId, trx);
+                          if(!success){
+                            await trx.rollback();
+                            responseData = {
+                              success,
+                              message,
+                              code
+                            };
+                            return;
+                          }
+                          if (skip) break;
+                          if (!action && fileType._multiple || (!fileType._multiple && !existOtherFileWithSameType)) {
+                            await PlacementHasFile.create(
+                              {
+                                placement_id: placement.id,
+                                file_type_id: fileType._id,
+                                url: fileUrl,
+                                file_name: fileName,
+                                entity: entity,
+                              },
+                              trx
+                            );
+                          } else if (action && action === 'replace' && !fileType._multiple) {
+                            fileExist.merge({
+                              url: fileUrl,
+                              file_name: fileName,
+                              entity: entity,
+                            });
+                            await fileExist.save(trx);
+                          }
+                        break;
+                    }
+                  }
+      
+
+        await this.updateCandidateSourceType(placement.sendout_id, source_type_id, trx);
+        await this.updateJobSourceType(placement.sendout_id, job_order_source_type_id, trx);
+
+        await trx.commit();
       }
-
-      //Store PlacementFiles
-      for (const file of files) {
-        const { type_id, action, entity, id } = file;
-        const fileType = find(modulePlacementFiles, { _id: type_id });
-        if (!fileType) continue;
-        const fieldsToSearch = fileType._multiple ? { id } : { file_type_id: type_id, placement_id: placement.id };
-        const fileExist = find(placementFiles.rows, fieldsToSearch);
-        const existOtherFileWithSameType = find(placementFiles.rows, (val) => val.file_type_id == type_id && val.id != id );
-        switch (action) {
-          case 'delete':
-            const haveNewFileToCreateWithSameType = find(files, (val) => val.type_id == type_id && !val.action );
-            if ((!fileType._required && type_id != types.REFERENCE_RELEASE_EMAIL._id) || haveNewFileToCreateWithSameType || existOtherFileWithSameType || 
-                (type_id == types.REFERENCE_RELEASE_EMAIL._id && await this.candidateHaveReferenceRelease(placement.sendout_id))) {
-              await trx.table('placement_has_files').where(fieldsToSearch).del();
-              if(fileExist){
-                await deleteServerFile(fileExist.url);
-                remove(placementFiles.rows,fieldsToSearch);
-              }
-            }
-            break;
-
-          default:
-            const { fileName, fileUrl, skip = false, success = true, message, code } = await this.getDataForFile(file, userId, trx);
-            if(!success){
-              trx && (await trx.rollback());
-              responseData = {
-                success,
-                message,
-                code
-              };
-              return;
-            }
-            if (skip) break;
-            if (!action && fileType._multiple || (!fileType._multiple && !existOtherFileWithSameType)) {
-              await PlacementHasFile.create(
-                {
-                  placement_id: placement.id,
-                  file_type_id: fileType._id,
-                  url: fileUrl,
-                  file_name: fileName,
-                  entity: entity,
-                },
-                trx
-              );
-            } else if (action && action === 'replace' && !fileType._multiple) {
-              fileExist.merge({
-                url: fileUrl,
-                file_name: fileName,
-                entity: entity,
-              });
-              await fileExist.save(trx);
-            }
-          break;
-        }
-      }
-
-      await this.updateCandidateSourceType(placement.sendout_id, source_type_id, trx);
-      await this.updateJobSourceType(placement.sendout_id, job_order_source_type_id, trx);
-
-      await trx.commit();
-
       const changes = detailedDiff(originalPlacement, placement.toJSON());
       if(moment(originalPlacement.start_date).isSame(placement.start_date)){
         delete changes['start_date'];
@@ -823,9 +825,12 @@ class PlacementRepository {
         .limit(1)
         .fetch()
     ).toJSON();
-    const { user_id : requestUserId = null } = suggestedUpdate;
-    if (placement_status_id === placementStatus.Pending_Update._id && suggestedUpdate && (requestUserId === coach_id || requestUserId === regional_director_id)) {
-      return requestUserId === regional_director_id ? placementStatus.Pending_Regional_Validation._id : placementStatus.Pending_Coach_Validation._id;
+
+    if(suggestedUpdate){
+      const { user_id : requestUserId = null } = suggestedUpdate;
+      if (placement_status_id === placementStatus.Pending_Update._id && (requestUserId === coach_id || requestUserId === regional_director_id)) {
+        return requestUserId === regional_director_id ? placementStatus.Pending_Regional_Validation._id : placementStatus.Pending_Coach_Validation._id;
+      }
     }
     return placement_status_id;
   }

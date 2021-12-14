@@ -4,14 +4,9 @@
 const Services = new (use('App/Helpers/Services'))();
 
 //Models
-const SendgridEmailValidation = use('App/Models/SendgridEmailValidation');
 
 //Utils
 const appInsights = require('applicationinsights');
-const Database = use('Database');
-const { chunk, uniq } = use('lodash');
-
-const EmailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 /**
  * Resourceful controller for interacting with email methods

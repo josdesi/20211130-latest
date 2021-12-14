@@ -1,7 +1,5 @@
 'use strict'
 
-const { errorMonitor } = require('agenda');
-
 /*
 |--------------------------------------------------------------------------
 | PermissionSeeder
@@ -13,7 +11,6 @@ const { errorMonitor } = require('agenda');
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
 const Permission = use('App/Models/Permission');
 const Database = use('Database');
 

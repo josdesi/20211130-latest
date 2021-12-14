@@ -144,7 +144,7 @@ function registerArrayOfIntegers() {
       return message;
     }
     const integers = inputIntegers.map(inputInteger => Number(inputInteger));
-    if (!integers || (integers.length === 0)) {
+    if ((integers.length === 0)) {
       return;
     }
     for (const integer of integers) {

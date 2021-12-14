@@ -150,7 +150,6 @@ class CompanyRepository {
           email,
           website,
           link_profile,
-          created_by: user_id,
           fee_agreement_url,
           file_name,
           created_by: user_id,
@@ -994,16 +993,18 @@ class CompanyRepository {
       this.withAllListings(query);
     }
     const company = await query.fetch();
-    if (!company.rows[0]) {
-      return null;
-    }
-    const companyJSON = company.rows[0].toJSON();
-    companyJSON.hiringAuthorities =  companyJSON
-    ? [
-        ...(companyJSON.otherHiringAuthorities ? companyJSON.otherHiringAuthorities : []),
-        ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
-      ]
-    : [];
+
+    
+    
+    if(company.rows!= null){
+
+      let companyJSON = company.rows[0].toJSON();
+      companyJSON.hiringAuthorities = [];
+    
+
+    companyJSON = company.rows[0].toJSON();
+    companyJSON.hiringAuthorities = [];
+
     const coach = await RecruiterRepository.getCoachInfoByRecruiterId(companyJSON.recruiter.id);
 
     const companyTypeReassure = {
@@ -1024,8 +1025,9 @@ class CompanyRepository {
         coordinates: companyJSON.coordinates
       }
     };
-
+  
     return result;
+  }
   }
 
   /**
@@ -1119,8 +1121,6 @@ class CompanyRepository {
       company.created_by === userId ||
       company.recruiter_id === userId ||
       company.assignedRecruiters.some((row) => row.recruiter_id === userId || row.coach_id === userId);
-
-    const companyIsNotSigned = company.company_type_id === companyType.NotSigned;// ATM, recruiter could request with any type whatsoever
 
     if (recruiterIsAssigned) return true;
 
@@ -1380,7 +1380,7 @@ class CompanyRepository {
 
       //Create attachment
       let company_has_file_id = null;
-      if (fileId && fileId !== '') {
+      if (fileId !== '') {
         const fileTemp = await Database.table('user_has_temp_files')
           .where('id', fileId)
           .where('user_id', userId)

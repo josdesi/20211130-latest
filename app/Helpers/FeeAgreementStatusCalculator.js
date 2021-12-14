@@ -1,5 +1,5 @@
 
-const { FeeAgreementSignatureProcessType, FeeAgreementPaymentSchemes, FeeAgreementStatus, FeeAgreementEventType, FlatFeeAgreementDeclinableField, StandardFeeAgreementDeclinableField, userRoles } = use('App/Helpers/Globals');
+const { FeeAgreementSignatureProcessType, FeeAgreementPaymentSchemes, FeeAgreementStatus, FeeAgreementEventType, userRoles } = use('App/Helpers/Globals');
 const ModulePresetsConfigRepository = new (use('App/Helpers/ModulePresetsConfigRepository'))();
 const UserRepository = new (use('App/Helpers/UserRepository'))();
 

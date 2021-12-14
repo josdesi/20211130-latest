@@ -1,4 +1,3 @@
-const PDFMerger = require('pdf-merger-js');
 const Env = use('Env');
 const DocuSign = use('Services/DocuSign');
 const DocusignAuditEvent = use('App/Models/DocusignAuditEvent');
@@ -10,7 +9,7 @@ const Event = use('Event');
 const EventType = use('App/Helpers/Events');
 
 const appInsights = require('applicationinsights');
-const { DocusignAuditEventActions, FeeAgreementStatus, FeeAgreementEventType, companyType, FeeAgreementSignerRole} = use('App/Helpers/Globals');
+const { DocusignAuditEventActions, FeeAgreementStatus, FeeAgreementEventType, FeeAgreementSignerRole} = use('App/Helpers/Globals');
 const CompanyFeeAgreement = use('App/Models/CompanyFeeAgreement');
 const FeeAgreementStatusCalculator = use('App/Helpers/FeeAgreementStatusCalculator');
 const SignerStatus = {
@@ -76,7 +75,7 @@ class DocusignFeeAgreementEventProcessor {
 
   async refreshAuditEvents({feeAgreement, envelope, throwError = true}) {
     
-    try {
+    
       const rawAuditEvents = await DocuSign.listAuditEvents(feeAgreement.contract_id);
       const currentEnvelope = envelope || (await DocuSign.getEnvelope(feeAgreement.contract_id, 'recipients'));
       if (!rawAuditEvents) return [];
@@ -85,9 +84,7 @@ class DocusignFeeAgreementEventProcessor {
       const formatedAuditEventsToScan = await (await Promise.all(formatedAuditEvents.filter(({id}) => !processedAuditEvents[id]).map(async (event) => this.saveAuditEvent({feeAgreement, formattedAuditEvent: event})))).filter(event => !!event);
 
       await this.scanForEvents({feeAgreement, formatedAuditEventsToScan, currentEnvelope})
-    } catch(error) {
-      throw error;
-    }
+    
   }
 
   async scanForEvents({feeAgreement, formatedAuditEventsToScan, currentEnvelope}) {

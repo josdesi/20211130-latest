@@ -20,12 +20,11 @@ class FeeAgreementScheduledJobsWorker {
         .whereRaw(`Date_part('day', Now() - validated_date) >= ?`, [MAX_DAYS_FOR_EXPIRATION])
         .whereIn('fee_agreement_status_id', [FeeAgreementStatus.PendingHiringAuthoritySignature, FeeAgreementStatus.PendingProductionDirectorSignature])
         .fetch();
-      const results = [];
+
       for(const feeAgreement of feeAgreementsToExpire.rows) {
-        const result = await FeeAgreementRepository.expireFeeAgreement(feeAgreement.id);
-        results.push(result);
+        await FeeAgreementRepository.expireFeeAgreement(feeAgreement.id);
         await sleep(0.8);
-      }
+      } 
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
     }
