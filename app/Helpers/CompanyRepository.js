@@ -996,6 +996,19 @@ class CompanyRepository {
     if (!company.rows[0]) {
       return null;
     }
+    
+    
+    if(company.rows[0]!= null){
+
+      const companyJSON = company.rows[0].toJSON();
+      companyJSON.hiringAuthorities =  companyJSON != null
+      ? [
+          ...(companyJSON.otherHiringAuthorities ? companyJSON.otherHiringAuthorities : []),
+          ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
+        ]
+      : [];
+    }
+    
     const companyJSON = company.rows[0].toJSON();
     companyJSON.hiringAuthorities =  companyJSON != null
     ? [
@@ -1003,6 +1016,7 @@ class CompanyRepository {
         ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
       ]
     : [];
+
     const coach = await RecruiterRepository.getCoachInfoByRecruiterId(companyJSON.recruiter.id);
 
     const companyTypeReassure = {

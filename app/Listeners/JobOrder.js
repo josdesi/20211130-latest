@@ -388,9 +388,11 @@ const JobOrder = module.exports = {
    */
   stopMetricsForAccountableRecruiter: async ({ additionalRecruiter }) => {
     try {
-      const { job_order_id, recruiter_id, type } = additionalRecruiter;
-      if(additionalRecruiter != null && type === AdditionalRecruiterTypes.Accountable){
-        await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: recruiter_id});
+      if( additionalRecruiter != null){
+        const { job_order_id, recruiter_id, type } = additionalRecruiter;
+        if(type === AdditionalRecruiterTypes.Accountable){
+          await JobOrder.stopMetricJobs({jobOrderId: job_order_id, userId: recruiter_id});
+        }
       }
     } catch (error) {
       appInsights.defaultClient.trackException({ exception: error });
