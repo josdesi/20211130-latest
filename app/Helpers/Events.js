@@ -1,0 +1,168 @@
+'use strict';
+
+const Events = {
+  Candidate: {
+    Created: 'candidate:created',
+    Updated: 'candidate:updated',
+    CheckMetricStatus: 'candidate:metric:status',
+    MetricsInitialized: 'candidate:metric:initialized',
+    MetricsStopped: 'candidate:metric:stopped',
+    BlueSheetUpdated: 'candidate:bluesheet:updated',
+    JobOrderMatched: 'candidate:joborder:matched',
+    NoteUpdated: 'candidate:notes:updated',
+    NoteDeleted: 'candidate:notes:deleted',
+    ActivityCreated: 'candidate:activities:created',
+    ActivityUpdated: 'candidate:activities:updated',
+    ActivityDeleted: 'candidate:activities:deleted',
+    BatchActivityCreated: 'candidate:batchActivities:created',
+    FileDeleted: 'candidate:files:deleted',
+    AdditionalRecruiterRequested: 'candidate:additionalRecruiter:requested',
+    AdditionalRecruiterRemoved: 'candidate:additionalRecruiter:removed',
+    AdditionalRecruiterUpdated: 'candidate:additionalRecruiter:updated',
+    RecruiterReassigned: 'candidate:recruiter:reassigned',
+    ReferenceReleaseCreated: 'candidate:referece:release:created',
+  },
+  JobOrder: {
+    Created: 'joborder:created',
+    Updated: 'joborder:updated',
+    CheckMetricStatus: 'joborder:metric:status',
+    MetricsInitialized: 'joborder:metric:initialized',
+    MetricsStopped: 'joborder:metric:stopped',
+    WhiteSheetUpdated: 'joborder:whitesheet:updated',
+    CandidateMatched: 'joborder:candidate:matched',
+    NoteUpdated: 'joborder:notes:updated',
+    NoteDeleted: 'joborder:notes:deleted',
+    ActivityCreated: 'joborder:activities:created',
+    ActivityUpdated: 'joborder:activities:updated',
+    ActivityDeleted: 'joborder:activities:deleted',
+    BatchActivityCreated: 'joborder:batchActivities:created',
+    FileDeleted: 'joborder:files:deleted',
+    AdditionalRecruiterRequested: 'joborder:additionalRecruiter:requested',
+    AdditionalRecruiterRemoved: 'joborder:additionalRecruiter:removed',
+    AdditionalRecruiterUpdated: 'joborder:additionalRecruiter:updated',
+    RecruiterReassigned: 'joborder:recruiter:reassigned',
+  },
+  Company: {
+    Created: 'company:created',
+    Updated: 'company:updated',
+    Reassured: 'company:reassured',
+    PendingReassureUpdated: 'company:pendingreassureupdated',
+    ReassureVerified: 'company:reassureverified',
+    NoteCreated: 'company:note:created',
+    NoteUpdated: 'company:note:updated',
+    NoteDeleted: 'company:note:deleted',
+    ActivityCreated: 'company:activity:created',
+    ActivityUpdated: 'company:activity:updated',
+    ActivityDeleted: 'company:activity:deleted',
+    FileCreated: 'company:file:created',
+    FileDeleted: 'company:file:deleted',
+    FeeAgreementSigned: 'company:feeAgreement:signed',
+  },
+  BulkEmail: {
+    ScheduleCreated: 'bulkemail:schedule:created',
+    ScheduleDeleted: 'bulkemail:schedule:deleted',
+    ScheduleUpdated: 'bulkemail:schedule:updated',
+    Sent: 'bulkemail:sent',
+    OptOutCreated: 'bulkemail:optout:created',
+    OptOutDeleted: 'bulkemail:optout:deleted',
+  },
+  SearchProject: {
+    Created: 'searchproject:created',
+    Updated: 'searchproject:updated',
+    ItemDeleted: 'searchproject:item:deleted',
+    ItemAdded: 'searchproject:item:added',
+  },
+  MicrosoftGraph: {
+    MailObtained: 'microsoftgraph:mail:obtained',
+    EmailSent: 'microsoftgraph:email:sent'    
+  },
+  CompanyFeeAgreement: {
+    CreatedAndSentToSign: 'companyfeeagreement:created:standard',
+    SignedByHiringAuthority: 'companyfeeagreement:signed:hiringauthority',
+    SignedByProductionDirector: 'companyfeeagreement:signed:productiondirector',
+    CreatedAndSentToCoachValidation: 'companyfeeagreement:created:nonstandard',
+    CreatedAndSentToOperationsValidation: 'companyfeeagreement:created:nonstandardbycoach',
+    DeclinedByCoach: 'companyfeeagreement:declined:coach',
+    SentToCoachValidation: 'companyfeeagreement:sent:coachvalidation',
+    ValidatedByCoach: 'companyfeeagreement:validatedby:coach',
+    DeclinedByOperations: 'companyfeeagreement:declined:operations',
+    SentToOperationsValidation: 'companyfeeagreement:sent:operationsvalidation',
+    ValidatedByOperationsAndSentToSign: 'companyfeeagreement:validatedby:operations',
+    SignatureRequestEmailBounced: 'companyfeeagreement:signature:request:email:bounced',
+    SignatureReminderSent: 'companyfeeagreement:signature:reminder:sent',
+    ValidatedByCoachAndSentToSign: 'companyfeeagreement:validatedby:coach:and:sent:to:sign',
+    Expired: 'companyfeeagreement:expired',
+    AboutExpire: 'companyfeeagreement:about:expire',
+    Voided: 'companyfeeagreement:voided',
+    SignedUnManaged: 'companyfeeagreement:signed:unmanaged'
+  },
+  User: {
+    Created: 'users:created',
+    Updated: 'users:updated',
+    LogedIn: 'users:logedin',
+    GraphSubscriptionRenewed: 'users:graphSubscription:renewed',
+  },
+  EmailTrackingBlock: {
+    Created: 'emailtrackingblock:created',
+    Deleted: 'emailtrackingblock:deleted',
+  },
+  Dig: {
+    Updated: 'dig:updated'
+  },
+  Sendout: {
+    Created: 'sendout:created',
+    Updated: 'sendout:updated',
+    Converted: 'sendout:converted',
+    Deleted: 'sendout:deleted',
+    CreateReminder: 'sendout:reminder:created',
+    DeleteReminder: 'sendout:reminder:deleted',
+    DeleteReminderById: 'sendout:reminder:deleted:id',
+    UpdatedStatus: 'sendout:updated:status'
+  },
+  Placement: {
+    Created: 'placement:created',
+    Updated: 'placement:updated',
+    SuggestionUpdate: 'placement:suggestion:update',
+    SuggestionUpdate: 'placement:suggestion:update',
+    InvoiceCreated: 'placement:invoice:created',
+    InvoiceUpdated: 'placement:invoice:updated',
+    InvoiceDeleted: 'placement:invoice:deleted',
+    PaymentCreated: 'placement:payment:created',
+    PaymentUpdated: 'placement:payment:updated',
+    PaymentDeleted: 'placement:payment:deleted',
+    FallenOff: 'placement:fallenoff',
+    RevertFallOff: 'placement:revert:falloff',
+    RequestFallOff: 'placement:request:falloff',
+    RequestRevertFallOff: 'placement:request:revert:falloff',
+  },
+  Name: {
+    Created: 'names:created',
+    Updated: 'names:updated',
+    Converted: 'names:converted',
+    Deleted: 'names:deleted',
+    ActivityCreated: 'name:activities:created',
+    ActivityUpdated: 'name:activities:updated',
+    ActivityDeleted: 'name:activities:deleted',
+    BatchActivityCreated: 'name:batchActivities:created',
+  },
+  HiringAuthority: {
+    Created: 'hiringAuthority:created',
+    Updated: 'hiringAuthority:updated',
+    Deleted: 'hiringAuthority:deleted',
+    ActivityCreated: 'hiringAuthority:activities:created',
+    ActivityUpdated: 'hiringAuthority:activities:updated',
+    ActivityDeleted: 'hiringAuthority:activities:deleted',
+    BatchActivityCreated: 'hiringAuthority:batchActivities:created',
+  },
+
+  Migration: {
+    Contacts: {
+      Completed: 'migration:contacts:completed'
+    },
+    Companies: {
+      Completed: 'migration:companies:completed'
+    }
+  }
+};
+
+module.exports = Events;
