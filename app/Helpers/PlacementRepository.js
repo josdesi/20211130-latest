@@ -548,7 +548,7 @@ class PlacementRepository {
           default:
             const { fileName, fileUrl, skip = false, success = true, message, code } = await this.getDataForFile(file, userId, trx);
             if(!success){
-              trx && (await trx.rollback());
+              trx != null && (await trx.rollback());
               responseData = {
                 success,
                 message,

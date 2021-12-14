@@ -1533,13 +1533,13 @@ class SendOutRepository {
       company: joborder ? joborder.company.name : '',
       hiring_authority: hiring_authority.full_name || '',
       candidate: candidate ? candidate.personalInformation.full_name : '',
-      company_recruiter: companyOwner ? companyOwner.full_name : joborder.recruiter.full_name,
-      company_recruiter_initials: companyOwner ? companyOwner.initials : joborder.recruiter.initials,
+      company_recruiter: companyOwner != null ? companyOwner.full_name : joborder.recruiter.full_name,
+      company_recruiter_initials: companyOwner != null ? companyOwner.initials : joborder.recruiter.initials,
       company_coach: companyCoach ? companyCoach.full_name : '',
-      candidate_recruiter: candidateOwner
+      candidate_recruiter: candidateOwner != null
         ? candidateOwner.full_name
         : candidate.recruiter.personalInformation.full_name,
-      candidate_recruiter_initials: candidateOwner ? candidateOwner.initials : candidate.recruiter.initials,
+      candidate_recruiter_initials: candidateOwner != null ? candidateOwner.initials : candidate.recruiter.initials,
       candidate_coach: candidateCoach ? candidateCoach.full_name : '',
     };
 

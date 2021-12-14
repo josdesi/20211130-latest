@@ -997,7 +997,7 @@ class CompanyRepository {
       return null;
     }
     const companyJSON = company.rows[0].toJSON();
-    companyJSON.hiringAuthorities =  companyJSON
+    companyJSON.hiringAuthorities =  companyJSON != null
     ? [
         ...(companyJSON.otherHiringAuthorities ? companyJSON.otherHiringAuthorities : []),
         ...(companyJSON.hiringAuthorities ? companyJSON.hiringAuthorities : []),
