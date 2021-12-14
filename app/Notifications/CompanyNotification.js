@@ -1,17 +1,13 @@
 'use strict';
 
 //Repositories
-const RecruiterRepository = new (use('App/Helpers/RecruiterRepository'))();
-const CandidateRepository = new (use('App/Helpers/CandidateRepository'))();
 const CompanyRepository = new (use('App/Helpers/CompanyRepository'))();
-const JobOrderRepository = new (use('App/Helpers/JobOrderRepository'))();
 const UserRepository = new (use('App/Helpers/UserRepository'))();
 
 //Utils
 const { notificationTypes, notificationCategories } = use('App/Notifications/Constants');
 const { find } = use('lodash');
 const Env = use('Env');
-const { userRoles, EntityTypes } = use('App/Helpers/Globals');
 
 class CompanyNotification {
   /**
@@ -285,7 +281,6 @@ class CompanyNotification {
 
     const notificationData = {
       id: companyId,
-      companyName: company.name,
       companyName: company.name,
       companyType: companyTypeName.title,
       type,

@@ -1,6 +1,5 @@
 'use strict'
 
-const { uniqueId } = require('lodash');
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')

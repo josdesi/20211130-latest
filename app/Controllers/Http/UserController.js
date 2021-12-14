@@ -15,7 +15,7 @@ const Role = use('App/Models/Role');
 const UserStatus = use('App/Models/UserStatus');
 
 const { userRoles, userStatus } = use('App/Helpers/Globals');
-const { auditFields, DateFormats, parseBoolean } = use('App/Helpers/Globals');
+const { DateFormats, parseBoolean } = use('App/Helpers/Globals');
 const Database = use('Database');
 const PersonalInformation = use('App/Models/PersonalInformation');
 const Contact = use('App/Models/Contact');

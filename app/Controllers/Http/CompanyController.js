@@ -46,10 +46,7 @@ class CompanyController {
       'country': 'city.country',
       'location': 'city.title',
       'cp.created_at': 'cp.created_at',
-      'last_activity_date': 'last_activity_date',
-      'industry': 'industry',
-      'specialty': 'specialty'
-    };
+      'last_activity_date': 'last_activity_date'};
 
     const buildDefaultMultipleFilterEntry = (column) => ({
       resolver: multipleWhereResolver.bind(this),
@@ -383,7 +380,7 @@ class CompanyController {
       const  { excludeListings } = request.all();
       const userId = auth.current.user.id;
 
-      const company = await CompanyRepository.details(params.id, !(excludeListings === 'true'), userId);
+      const company = await CompanyRepository.details(params.id, (excludeListings !== 'true'), userId);
       if (!company) {
         return response.status(404).send({
           message: 'Company Not Found',

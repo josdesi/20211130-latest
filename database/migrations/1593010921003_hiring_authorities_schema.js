@@ -2,7 +2,6 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
-const Database = use('Database')
 
 class HiringAuthoritiesSchema extends Schema {
   up () {

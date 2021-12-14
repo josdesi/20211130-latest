@@ -25,7 +25,6 @@ const {
   userRoles,
   AdditionalRecruiterStatus,
   AdditionalRecruiterTypes,
-  activityLogTypes,
   userPermissions,
   nameTypes,
   joinStringForQueryUsage,
@@ -61,9 +60,6 @@ const CandidateChangeLog = use('App/Models/CandidateChangeLog');
 const CandidateAdditionalRecruiter = use('App/Models/CandidateAdditionalRecruiter');
 const CompanyHasCandidateEmployee = use('App/Models/CompanyHasCandidateEmployee');
 const Company = use('App/Models/Company');
-const CandidateBulkActivityReference = use('App/Models/CandidateBulkActivityReference');
-const Team = use('App/Models/Team');
-
 const userBuilder = (builder) => {
   builder.setHidden(['personal_information_id', 'user_id', ...auditFields]);
   builder.with('personalInformation', (builder) => {
@@ -262,7 +258,6 @@ class CandidateRepository {
       const suggestedCompaniesIds = [];
       const lowSimilarity = '0.20';
       const mediumSimilarity = '0.25';
-      const highSimilarity = '0.30';
 
       const candidate = await Database.table('contacts_directory')
         .where({
@@ -2374,7 +2369,6 @@ class CandidateRepository {
     if (!candidate) {
       return null;
     }
-    const blueSheet = await BlueSheetRepository.getByCandidate(candidateActivityLog.candidate_id);
     const additionalRecruiter =  await this.existAdditionalRecruiter({
       candidateId: candidate_id,
       status: AdditionalRecruiterStatus.Approved,

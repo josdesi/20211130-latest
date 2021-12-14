@@ -2,8 +2,6 @@
 
 //Utils
 const appInsights = require('applicationinsights');
-const { CompanyFeeAgreement } = require('../Helpers/Events');
-const Database = use('Database');
 const { notificationTypes } = use('App/Notifications/Constants');
 const NotificationService = use('Services/Notification');
 const CompanyReassureEmail = new (use('App/Emails/CompanyReassureEmail'))();

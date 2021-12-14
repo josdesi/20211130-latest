@@ -11,7 +11,6 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory');
 const BulkEmailScopeType = use('App/Models/BulkEmailScopeType');
 const { BulkEmailScopeTypes } = use('App/Helpers/Globals');
 

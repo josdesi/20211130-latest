@@ -118,7 +118,7 @@ class SocketIoMiddleware {
         await new CoCompose()
           .register(middlewares)
           .runner()
-          .resolve(await this.resolveMiddleware.bind(this))
+          .resolve(this.resolveMiddleware.bind(this))
           .params([middlewareParamas])
           .run();
 
